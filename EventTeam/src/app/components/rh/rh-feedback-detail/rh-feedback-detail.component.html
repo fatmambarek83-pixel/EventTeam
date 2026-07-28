@@ -1,0 +1,23 @@
+<a routerLink="/rh/feedbacks" class="back-link">← Retour aux feedbacks</a>
+<ng-container *ngIf="feedback">
+  <div class="hero" [style.backgroundImage]="'url(' + (feedback.imageUrl || 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=600') + ')'">
+    <div class="hero-overlay">
+      <h2>{{ feedback.eventName }}</h2>
+      <p>{{ feedback.eventDate | date: 'dd MMM yyyy' }} · {{ feedback.eventName }}</p>
+    </div>
+  </div>
+  <h3 class="section-title">Avis des participants</h3>
+  <div class="reviews-card">
+    <p class="empty" *ngIf="feedback.reviews.length === 0">Aucun avis pour cet événement.</p>
+    <div class="review" *ngFor="let review of feedback.reviews">
+      <div class="review-header">
+        <span class="author">{{ review.authorName }}</span>
+        <span class="stars">
+<span *ngFor="let n of stars(review.rating)" class="star" [class.filled]="n <= review.rating">★</span>
+</span>
+      </div>
+      <p class="comment">{{ review.comment }}</p>
+      <p class="review-date">{{ review.date | date: 'dd MMM yyyy' }}</p>
+    </div>
+  </div>
+</ng-container>

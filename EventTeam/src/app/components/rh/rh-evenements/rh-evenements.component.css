@@ -1,0 +1,152 @@
+.page-header.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.page-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #201f36;
+  margin: 0 0 4px;
+}
+.page-header p {
+  color: #6b6d84;
+  margin: 0;
+  font-size: 14px;
+}
+.btn-primary {
+  background: #6c5ce7;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.btn-primary:hover {
+  background: #5a4bd4;
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+}
+.tab {
+  background: #fff;
+  border: 1px solid #e2e3ee;
+  border-radius: 10px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b4d63;
+  cursor: pointer;
+}
+.tab.active {
+  background: #6c5ce7;
+  border-color: #6c5ce7;
+  color: #fff;
+}
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+.event-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(20, 21, 43, 0.04);
+}
+.event-thumb {
+  height: 130px;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 12px;
+  box-sizing: border-box;
+}
+.status-pill {
+  background: rgba(255, 255, 255, 0.9);
+  color: #6c5ce7;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  height: fit-content;
+}
+.status-pill.done {
+  background: rgba(255, 255, 255, 0.9);
+  color: #6b6d84;
+}
+.date-badge {
+  background: #fff;
+  border-radius: 10px;
+  padding: 4px 10px;
+  text-align: center;
+  line-height: 1.1;
+}
+.date-badge .day {
+  display: block;
+  font-weight: 700;
+  color: #6c5ce7;
+  font-size: 15px;
+}
+.date-badge .month {
+  display: block;
+  font-size: 10px;
+  color: #9497ad;
+  text-transform: uppercase;
+}
+.event-body {
+  padding: 16px 18px 18px;
+}
+.event-body h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #201f36;
+  margin: 0 0 4px;
+}
+.location {
+  font-size: 13px;
+  color: #6b6d84;
+  margin: 0 0 12px;
+}
+.progress-track {
+  height: 6px;
+  background: #eef0f7;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+}
+.capacity {
+  font-size: 12px;
+  color: #9497ad;
+  margin: 8px 0 14px;
+}
+.actions-row {
+  display: flex;
+  justify-content: space-between;
+  border-top: 1px solid #f0f1f6;
+  padding-top: 12px;
+}
+.link-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 0;
+}
+.link-btn.edit { color: #6c5ce7; }
+.link-btn.delete { color: #ef4444; }

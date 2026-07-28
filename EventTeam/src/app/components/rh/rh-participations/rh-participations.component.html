@@ -1,0 +1,45 @@
+<div class="page-header">
+  <h1>Participations</h1>
+  <p>{{ participations.length }} participations</p>
+</div>
+<div class="table-card">
+  <table>
+    <thead>
+    <tr>
+      <th>Participant</th>
+      <th>Événement</th>
+      <th>Date</th>
+      <th>Statut</th>
+      <th class="actions-col">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let p of participations">
+      <td>
+        <div class="participant-cell">
+          <div class="avatar" [style.background]="'#6c5ce7'">{{ p.avatarInitials }}</div>
+          <div>
+            <div class="name">{{ p.participantName }}</div>
+            <div class="sub">{{ p.participantDepartment }}</div>
+          </div>
+        </div>
+      </td>
+      <td>
+        <div class="name">{{ p.eventName }}</div>
+        <div class="sub"> {{ p.eventLocation }}</div>
+      </td>
+      <td>{{ p.date | date: 'dd MMM yyyy' }}</td>
+      <td>
+        <span class="badge" [ngClass]="statusClass(p.status)">{{ p.status }}</span>
+      </td>
+      <td class="actions-col">
+        <ng-container *ngIf="p.status === 'En attente'; else dash">
+          <button class="btn-accept" (click)="onAccept(p)">✓ Accepter</button>
+          <button class="btn-refuse" (click)="onRefuse(p)">✕ Refuser</button>
+        </ng-container>
+        <ng-template #dash><span class="dash">—</span></ng-template>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

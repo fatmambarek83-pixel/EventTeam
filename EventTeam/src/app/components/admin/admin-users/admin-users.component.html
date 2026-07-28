@@ -1,0 +1,160 @@
+<div class="accounts-wrapper">
+  <div class="welcome-section">
+    <h1>Gestion des comptes</h1>
+    <p>Créez et gérez les comptes RH Manager pour votre organisation</p>
+  </div>
+
+  <!-- Stats rapides -->
+  <div class="stats-bar">
+    <div class="stat-pill">
+      <span class="stat-num">{{ users.length }}</span>
+      <span class="stat-label">Comptes RH</span>
+    </div>
+    <div class="stat-pill active">
+      <span class="stat-num">{{ users.length }}</span>
+      <span class="stat-label">Actifs</span>
+    </div>
+  </div>
+
+  <!-- Formulaire de création -->
+  <div class="creation-box">
+    <div class="box-header">
+      <span class="icon-chip">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </span>
+      <h2>Créer un compte RH Manager</h2>
+    </div>
+
+    <div class="alert success" *ngIf="successMessage">
+      <svg class="alert-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      <span>{{ successMessage }}</span>
+      <button class="alert-close" (click)="successMessage = ''">×</button>
+    </div>
+    <div class="alert error" *ngIf="errorMessage">
+      <svg class="alert-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span>{{ errorMessage }}</span>
+      <button class="alert-close" (click)="errorMessage = ''">×</button>
+    </div>
+
+    <form (ngSubmit)="onSubmit()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom complet</label>
+          <input type="text" name="name" placeholder="Prénom Nom" [(ngModel)]="form.name" required>
+        </div>
+        <div class="form-group">
+          <label>Email professionnel</label>
+          <input type="email" name="email" placeholder="rh@entreprise.fr" [(ngModel)]="form.email" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Mot de passe provisoire</label>
+        <div class="password-wrapper">
+          <input [type]="showPassword ? 'text' : 'password'" name="password" placeholder="Minimum 6 caractères" [(ngModel)]="form.password" required>
+          <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+            <svg *ngIf="!showPassword" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg *ngIf="showPassword" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.5 18.5 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+      </div>
+      <button type="submit" class="submit-btn" [disabled]="submitting">
+        <span *ngIf="submitting" class="spinner"></span>
+        <span>{{ submitting ? 'Création en cours...' : 'Créer le compte RH' }}</span>
+      </button>
+    </form>
+  </div>
+
+  <!-- Liste des comptes -->
+  <div class="existing-section">
+    <div class="section-header">
+      <div class="section-title">
+        <span class="icon-chip muted">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </span>
+        <h2>Comptes RH existants</h2>
+      </div>
+      <span class="count-badge">{{ users.length }} compte(s)</span>
+    </div>
+
+    <div class="loading-state" *ngIf="loading">
+      <div class="spinner"></div>
+      <p>Chargement des comptes...</p>
+    </div>
+
+    <div class="users-list" *ngIf="!loading">
+      <!-- En-tête de tableau -->
+      <div class="user-row header-row" *ngIf="users.length > 0">
+        <span class="col-avatar"></span>
+        <span class="col-name">Utilisateur</span>
+        <span class="col-status">Statut</span>
+        <span class="col-date">Créé le</span>
+        <span class="col-actions">Actions</span>
+      </div>
+
+      <!-- Lignes utilisateurs -->
+      <div class="user-row" *ngFor="let u of users; let i = index">
+        <div class="user-avatar" [style.background-color]="getAvatarColor(i)">
+          {{ getInitials(u.name || '') }}
+        </div>
+        <div class="user-meta">
+          <span class="user-name">{{ u.name }}</span>
+          <span class="user-email">{{ u.email }}</span>
+        </div>
+        <span class="status-badge active">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Accepté
+        </span>
+        <span class="user-date">{{ u.createdAt || '—' }}</span>
+        <div class="user-actions">
+          <button class="action-btn view" title="Voir le profil">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          <button class="action-btn delete" title="Supprimer le compte" (click)="confirmDelete(u)" [disabled]="deletingId === u.id">
+            <span *ngIf="deletingId === u.id" class="spinner-small"></span>
+            <svg *ngIf="deletingId !== u.id" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Empty state amélioré -->
+      <div class="empty-state" *ngIf="users.length === 0">
+        <div class="empty-icon">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>Aucun compte RH</h3>
+        <p>Créez votre premier compte RH Manager en utilisant le formulaire ci-dessus.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de confirmation suppression -->
+<div class="modal-overlay" *ngIf="userToDelete" (click)="cancelDelete()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    </div>
+    <h3>Confirmer la suppression</h3>
+    <p>
+      Êtes-vous sûr de vouloir supprimer le compte de
+      <strong>{{ userToDelete.name }}</strong> ?
+    </p>
+    <p class="modal-warning">Cette action est irréversible.</p>
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="cancelDelete()">Annuler</button>
+      <button class="btn-confirm-delete" (click)="deleteUser()" [disabled]="deletingId === userToDelete.id">
+        <span *ngIf="deletingId === userToDelete.id" class="spinner-small"></span>
+        {{ deletingId === userToDelete.id ? 'Suppression...' : 'Supprimer définitivement' }}
+      </button>
+    </div>
+  </div>
+</div>

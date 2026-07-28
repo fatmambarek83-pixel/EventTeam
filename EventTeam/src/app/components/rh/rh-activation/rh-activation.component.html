@@ -1,0 +1,75 @@
+<div class="page-header">
+  <h1>Activation des comptes</h1>
+  <p>Validez ou refusez les nouvelles inscriptions (employés et entreprises externes).</p>
+</div>
+
+<div class="section-title-row">
+  <h2>Comptes en attente</h2>
+  <span class="count-badge" *ngIf="pendingAccounts.length">{{ pendingAccounts.length }}</span>
+</div>
+
+<div class="list-card">
+  <div class="list-empty" *ngIf="pendingAccounts.length === 0">
+    Aucun compte en attente pour le moment.
+  </div>
+
+  <div class="list-row" *ngFor="let account of pendingAccounts">
+    <div class="account-cell">
+      <div class="avatar" [style.background]="account.type === 'Employé' ? '#7c5dfa' : '#f2994a'">
+        {{ account.avatarInitials }}
+      </div>
+      <div>
+        <div class="name">{{ account.name }}</div>
+        <div class="email">{{ account.email }}</div>
+        <div class="sub">{{ subtitle(account) }}</div>
+      </div>
+    </div>
+    <div class="row-actions">
+      <button class="btn-activate" (click)="onActivate(account)">Activer</button>
+      <button class="btn-reject" (click)="onReject(account)">Refuser</button>
+    </div>
+  </div>
+</div>
+
+<div class="section-title-row" style="margin-top:28px;">
+  <h2>Comptes actifs</h2>
+  <button class="btn-toggle" (click)="toggleActiveAccounts()">
+    {{ showActiveAccounts ? 'Masquer' : 'Afficher' }}
+  </button>
+</div>
+
+<ng-container *ngIf="showActiveAccounts">
+  <h2 class="section-title-simple">Employés actifs</h2>
+  <div class="list-card">
+    <div class="list-empty" *ngIf="activeEmployees.length === 0">
+      Aucun employé actif pour le moment.
+    </div>
+    <div class="list-row" *ngFor="let employee of activeEmployees">
+      <div class="account-cell">
+        <div class="avatar" style="background:#7c5dfa">{{ employee.avatarInitials }}</div>
+        <div>
+          <div class="name">{{ employee.name }}</div>
+          <div class="email">{{ employee.email }}</div>
+        </div>
+      </div>
+      <span class="status-accepted">Actif</span>
+    </div>
+  </div>
+
+  <h2 class="section-title-simple">Entreprises actives</h2>
+  <div class="list-card">
+    <div class="list-empty" *ngIf="externalCompanies.length === 0">
+      Aucune entreprise partenaire active pour le moment.
+    </div>
+    <div class="list-row" *ngFor="let company of externalCompanies">
+      <div class="account-cell">
+        <div class="avatar" style="background:#16a34a">{{ company.avatarInitials }}</div>
+        <div>
+          <div class="name">{{ company.name }}</div>
+          <div class="email">{{ company.email }}</div>
+        </div>
+      </div>
+      <span class="status-accepted">Actif</span>
+    </div>
+  </div>
+</ng-container>

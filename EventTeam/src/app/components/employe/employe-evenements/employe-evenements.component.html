@@ -1,0 +1,69 @@
+<div class="page-header">
+  <h1>Événements</h1>
+  <p>{{ rows.length }} événement{{ rows.length > 1 ? 's' : '' }} au total</p>
+</div>
+
+<div class="tabs">
+  <button class="tab" [class.active]="activeTab === 'Tous'" (click)="setTab('Tous')">Tous</button>
+  <button class="tab" [class.active]="activeTab === 'À venir'" (click)="setTab('À venir')">À venir</button>
+  <button class="tab" [class.active]="activeTab === 'Terminé'" (click)="setTab('Terminé')">Terminé</button>
+</div>
+
+<p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<div class="empty-state" *ngIf="!loading && filteredRows.length === 0">
+  <div class="empty-icon">📅</div>
+  <h3>Aucun événement ici</h3>
+  <p>Revenez plus tard pour découvrir de nouveaux événements.</p>
+</div>
+
+<div class="events-grid" *ngIf="filteredRows.length > 0">
+  <div class="event-card" *ngFor="let row of filteredRows">
+    <div class="event-thumb" [style.backgroundImage]="'url(https://images.unsplash.com/photo-1511578314322-379afb476865?w=400)'">
+      <span class="status-pill" [class.done]="row.event.status === 'Terminé'">
+        {{ row.event.status || 'À venir' }}
+      </span>
+      <div class="date-badge">
+        <span class="day">{{ row.event.startDate | date: 'dd' }}</span>
+        <span class="month">{{ row.event.startDate | date: 'MMM' }}</span>
+      </div>
+    </div>
+    <div class="event-body">
+      <h3>{{ row.event.name }}</h3>
+      <p class="location">📍 {{ row.event.location }}</p>
+
+      <div class="progress-track" *ngIf="row.event.capacity">
+        <div
+          class="progress-fill"
+          [style.width.%]="progressPercent(row.event)"
+          [style.background]="progressColor(progressPercent(row.event))"
+        ></div>
+      </div>
+      <p class="capacity" *ngIf="row.event.capacity">
+        {{ row.event.participantsCount || 0 }}/{{ row.event.capacity }} inscrits
+      </p>
+
+      <div class="actions-row">
+        <ng-container *ngIf="isActive(row.participation); else joinBlock">
+          <span
+            class="status-tag"
+            [class.accepted]="row.participation?.status === 'Accepté'"
+            [class.pending]="row.participation?.status === 'En attente'"
+          >{{ row.participation?.status }}</span>
+          <button
+            class="link-btn cancel"
+            [disabled]="pendingActionEventId === row.event.id"
+            (click)="onAnnuler(row)"
+          >Annuler</button>
+        </ng-container>
+        <ng-template #joinBlock>
+          <button
+            class="btn-primary full"
+            [disabled]="row.event.status === 'Terminé' || pendingActionEventId === row.event.id"
+            (click)="onParticiper(row)"
+          >Participer</button>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

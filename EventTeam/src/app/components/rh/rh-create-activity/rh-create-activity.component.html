@@ -1,0 +1,45 @@
+<a routerLink="/rh/activites" class="back-link">← Retour aux activités</a>
+<h1 class="form-title">{{ isEditMode ? "Modifier l'activité" : 'Nouvelle activité' }}</h1>
+<form class="form-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <label class="field">
+    <span>Nom de l'activité</span>
+    <input type="text" formControlName="name" placeholder="Team Building Outdoor" />
+  </label>
+  <label class="field">
+    <span>Description</span>
+    <textarea formControlName="description" rows="3" placeholder="Décrivez l'activité..."></textarea>
+  </label>
+  <div class="field-row">
+    <label class="field">
+      <span>Date de début</span>
+      <input type="date" formControlName="startDate" />
+    </label>
+    <label class="field">
+      <span>Date de fin</span>
+      <input type="date" formControlName="endDate" />
+    </label>
+  </div>
+  <label class="field">
+    <span>Animateur</span>
+    <input type="text" formControlName="animateur" placeholder="Prénom Nom" />
+  </label>
+  <label class="field">
+    <span>Événement</span>
+    <select formControlName="eventId">
+      <option value="" disabled>Sélectionnez un événement</option>
+      <option *ngFor="let e of events" [value]="e.id">{{ e.name }}</option>
+    </select>
+  </label>
+  <label class="field">
+    <span>Statut</span>
+    <select formControlName="status">
+      <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+    </select>
+  </label>
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="onCancel()">Annuler</button>
+    <button type="submit" class="btn-primary">
+      {{ isEditMode ? "Enregistrer" : "Créer l'activité" }}
+    </button>
+  </div>
+</form>

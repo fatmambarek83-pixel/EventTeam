@@ -1,0 +1,38 @@
+<a routerLink="/rh/evenements" class="back-link">← Retour aux événements</a>
+<h1 class="form-title">{{ isEditMode ? "Modifier l'événement" : 'Nouvel événement' }}</h1>
+<form class="form-card" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <label class="field">
+    <span>Nom de l'événement</span>
+    <input type="text" formControlName="name" placeholder="Q3 Team Building Day" />
+  </label>
+  <label class="field">
+    <span>Description</span>
+    <textarea formControlName="description" rows="3" placeholder="Décrivez l'événement..."></textarea>
+  </label>
+  <div class="field-row">
+    <label class="field">
+      <span>Date</span>
+      <input type="date" formControlName="date" />
+    </label>
+    <label class="field">
+      <span>Capacité max</span>
+      <input type="number" formControlName="maxCapacity" min="1" />
+    </label>
+  </div>
+  <label class="field">
+    <span>Lieu</span>
+    <input type="text" formControlName="location" placeholder="Paris — Centre Pompidou" />
+  </label>
+  <label class="field">
+    <span>Statut</span>
+    <select formControlName="status">
+      <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+    </select>
+  </label>
+  <div class="form-actions">
+    <button type="button" class="btn-secondary" (click)="onCancel()">Annuler</button>
+    <button type="submit" class="btn-primary">
+      {{ isEditMode ? 'Enregistrer' : "Créer l'événement" }}
+    </button>
+  </div>
+</form>

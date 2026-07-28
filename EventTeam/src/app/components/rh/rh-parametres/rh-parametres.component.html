@@ -1,0 +1,47 @@
+<div class="page-header">
+  <h1>Paramètres</h1>
+  <p>Gérez vos préférences de notification et d'affichage</p>
+</div>
+<div class="settings-card">
+  <h3>Notifications</h3>
+  <div class="setting-row">
+    <div>
+      <div class="label">Notifications par email</div>
+      <div class="hint">Recevez un email pour chaque nouvelle inscription</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" [(ngModel)]="emailNotifications" />
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="setting-row">
+    <div>
+      <div class="label">Alertes nouvelles inscriptions</div>
+      <div class="hint">Soyez notifié dès qu'un compte attend une activation</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" [(ngModel)]="newRegistrationAlerts" />
+      <span class="slider"></span>
+    </label>
+  </div>
+  <div class="setting-row">
+    <div>
+      <div class="label">Résumé hebdomadaire</div>
+      <div class="hint">Recevez un récapitulatif chaque lundi</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" [(ngModel)]="weeklyDigest" />
+      <span class="slider"></span>
+    </label>
+  </div>
+</div>
+<div class="settings-card">
+  <h3>Langue</h3>
+  <div class="setting-row">
+    <div class="label">Langue de l'interface</div>
+    <select [(ngModel)]="language">
+      <option value="fr">Français</option>
+      <option value="en">English</option>
+    </select>
+  </div>
+</div>

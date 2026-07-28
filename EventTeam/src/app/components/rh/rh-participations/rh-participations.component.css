@@ -1,0 +1,107 @@
+.page-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  color: #201f36;
+  margin: 0 0 4px;
+}
+.page-header p {
+  color: #6b6d84;
+  margin: 0 0 20px;
+  font-size: 14px;
+}
+.table-card {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(20, 21, 43, 0.04);
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  color: #9497ad;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f0f1f6;
+}
+td {
+  padding: 14px 20px;
+  border-bottom: 1px solid #f6f7fa;
+  font-size: 14px;
+  color: #4b4d63;
+  vertical-align: middle;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.participant-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 600;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.name {
+  font-weight: 600;
+  color: #201f36;
+  font-size: 14px;
+}
+.sub {
+  font-size: 12px;
+  color: #9497ad;
+}
+.badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
+  display: inline-block;
+}
+.badge-accepted { background: #dbf8ec; color: #16a34a; }
+.badge-pending { background: #fef3d6; color: #d99700; }
+.badge-refused { background: #fde2e2; color: #ef4444; }
+.actions-col {
+  white-space: nowrap;
+}
+.btn-accept,
+.btn-refuse {
+  border: none;
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 8px;
+}
+.btn-accept {
+  background: #dbf8ec;
+  color: #16a34a;
+}
+.btn-accept:hover {
+  background: #bdf0da;
+}
+.btn-refuse {
+  background: #fde2e2;
+  color: #ef4444;
+}
+.btn-refuse:hover {
+  background: #fbc9c9;
+}
+.dash {
+  color: #c7c9d6; /* the file got cut off here — set whatever color you intended */
+}

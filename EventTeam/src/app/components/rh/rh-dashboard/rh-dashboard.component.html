@@ -1,0 +1,99 @@
+<!-- HEADER -->
+<div class="page-header">
+  <h1>Bonjour {{ firstName }} 👋</h1>
+  <p>Voici un aperçu de vos activités de team building.</p>
+</div>
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon purple">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    </div>
+    <div class="stat-value">{{ stats.totalEvents }}</div>
+    <div class="stat-label">Événements totaux</div>
+    <div class="stat-delta">{{ stats.totalEventsDelta }}</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon teal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+    </div>
+    <div class="stat-value">{{ stats.activeActivities }}</div>
+    <div class="stat-label">Activités actives</div>
+    <div class="stat-delta">sur {{ stats.activeActivitiesTotal }} disponibles</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon green">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+    </div>
+    <div class="stat-value">{{ stats.totalParticipants }}</div>
+    <div class="stat-label">Total participants</div>
+    <div class="stat-delta">tous événements</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon yellow">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    </div>
+    <div class="stat-value">{{ stats.averageRating | number:'1.1-1' }}</div>
+    <div class="stat-label">Note moyenne</div>
+    <div class="stat-delta">sur 5 étoiles</div>
+  </div>
+</div>
+
+<!-- ÉVÉNEMENTS -->
+<div class="section-header">
+  <h2>Prochains événements</h2>
+  <a routerLink="/rh/evenements" class="link">Voir tous ›</a>
+</div>
+
+<!-- ÉTAT VIDE -->
+<div class="empty-state" *ngIf="upcomingEvents.length === 0">
+  <div class="empty-icon">📅</div>
+  <h3>Aucun événement planifié</h3>
+  <p>Créez votre premier événement team building pour commencer.</p>
+  <a routerLink="/rh/create-event" class="btn-primary">Créer un événement</a>
+</div>
+
+<!-- LISTE ÉVÉNEMENTS -->
+<div class="events-grid" *ngIf="upcomingEvents.length > 0">
+  <div class="event-card" *ngFor="let event of upcomingEvents">
+    <div class="event-thumb" [style.backgroundImage]="'url(' + (event.imageUrl || 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=400') + ')'">
+      <div class="date-badge">
+        <span class="day">{{ event.date | date: 'dd' }}</span>
+        <span class="month">{{ event.date | date: 'MMM' }}</span>
+      </div>
+    </div>
+    <div class="event-body">
+      <div class="event-top">
+        <div>
+          <h3>{{ event.name }}</h3>
+          <p class="location">{{ event.location }}</p>
+        </div>
+        <span class="status-badge">À venir</span>
+      </div>
+      <div class="progress-track">
+        <div
+          class="progress-fill"
+          [style.width.%]="progressPercent(event)"
+          [style.background]="progressColor(progressPercent(event))"
+        ></div>
+      </div>
+      <p class="capacity">{{ event.registeredCount }}/{{ event.maxCapacity }} participants</p>
+    </div>
+  </div>
+</div>

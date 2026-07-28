@@ -1,0 +1,50 @@
+<div class="admin-container">
+  <app-sidebar></app-sidebar>
+  <main class="main-content">
+    <header class="top-header">
+      <!-- Zone gauche: KHAWYA (recherche supprimee) -->
+      <div class="header-left"></div>
+      <!-- Zone droite: Notification + Profile -->
+      <div class="header-right">
+        <!-- Notification Bell -->
+        <div class="notification-wrapper">
+          <button class="notification-btn" (click)="toggleNotifications()">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            <span class="notification-badge" *ngIf="unreadCount > 0">{{ unreadCount }}</span>
+          </button>
+          <!-- Dropdown notifications -->
+          <div class="notification-dropdown" *ngIf="showNotifications">
+            <div class="notification-header">
+              <h4>Notifications</h4>
+              <span class="mark-read" (click)="markAllRead()">Tout marquer comme lu</span>
+            </div>
+            <div class="notification-list">
+              <div class="notification-item" *ngFor="let notif of notifications" [class.unread]="!notif.read">
+                <div class="notif-icon" [ngClass]="notif.type">
+                  <span *ngIf="notif.type === 'event'">Evenement</span>
+                  <span *ngIf="notif.type === 'user'">Utilisateur</span>
+                  <span *ngIf="notif.type === 'alert'">Alerte</span>
+                </div>
+                <div class="notif-content">
+                  <p class="notif-title">{{ notif.title }}</p>
+                  <p class="notif-time">{{ notif.time }}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Profile badge -->
+        <div class="profile-badge">
+          <span class="avatar">AS</span>
+          <span class="profile-name">Admin S.</span>
+        </div>
+      </div>
+    </header>
+    <div class="content-body">
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+</div>

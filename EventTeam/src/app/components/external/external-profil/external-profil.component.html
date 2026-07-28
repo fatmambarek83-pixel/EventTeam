@@ -1,0 +1,38 @@
+<div class="page-header">
+  <h1>Mon Profil</h1>
+  <p>Gérez les informations de votre entreprise</p>
+</div>
+<div class="profile-card">
+  <div class="profile-summary">
+    <div class="avatar-lg" [style.background]="currentUser?.avatarColor || '#f59e0b'">
+      {{ currentUser?.avatarInitials }}
+    </div>
+    <div>
+      <h3>{{ currentUser?.name }}</h3>
+      <span class="role-badge">Entreprise Ext.</span>
+    </div>
+  </div>
+  <form [formGroup]="form" (ngSubmit)="onSave()" class="profile-form">
+    <label class="field">
+      <span>Nom de l'entreprise</span>
+      <input type="text" formControlName="name" />
+    </label>
+    <label class="field">
+      <span>Email</span>
+      <input type="email" formControlName="email" />
+    </label>
+    <label class="field">
+      <span>Contact</span>
+      <input type="text" formControlName="contactName" placeholder="Nom du contact principal" />
+    </label>
+    <label class="field">
+      <span>Téléphone</span>
+      <input type="tel" formControlName="phone" placeholder="+33 6 12 34 56 78" />
+    </label>
+    <div class="form-actions">
+      <button type="submit" class="btn-primary">Enregistrer les modifications</button>
+      <span class="saved-msg" *ngIf="saved">✓ Profil mis à jour</span>
+      <span class="error-msg" *ngIf="saveError">✕ Échec de la mise à jour</span>
+    </div>
+  </form>
+</div>

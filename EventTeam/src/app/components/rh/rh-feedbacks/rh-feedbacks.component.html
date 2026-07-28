@@ -1,0 +1,21 @@
+<div class="page-header">
+  <h1>Feedback</h1>
+  <p>Consultez les retours de vos équipes</p>
+</div>
+<div class="feedback-grid">
+  <div class="feedback-card" *ngFor="let f of feedbackEvents" (click)="openDetail(f)">
+    <div class="thumb" [style.backgroundImage]="'url(' + (f.imageUrl || 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=120') + ')'"></div>
+    <div class="info">
+      <h3>{{ f.eventName }}</h3>
+      <p class="date">{{ f.eventDate | date: 'dd MMM yyyy' }}</p>
+      <p class="reviews" *ngIf="f.reviews.length === 0">Aucun avis encore</p>
+      <p class="reviews rated" *ngIf="f.reviews.length > 0">
+<span class="stars">
+<span *ngFor="let n of [1,2,3,4,5]" class="star" [class.filled]="n <= averageRating(f)">★</span>
+</span>
+        {{ averageRating(f) }} ({{ f.reviews.length }} avis)
+      </p>
+    </div>
+    <span class="chevron">›</span>
+  </div>
+</div>

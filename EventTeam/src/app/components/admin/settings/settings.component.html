@@ -1,0 +1,39 @@
+<div class="settings-wrapper">
+  <div class="welcome-section">
+    <h1>Paramètres</h1>
+  </div>
+  <div class="settings-card">
+    <h3>Notifications</h3>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <span class="setting-title">Notifications par email</span>
+        <span class="setting-desc">Recevoir des alertes par email</span>
+      </div>
+      <button class="toggle" [class.active]="emailNotifications" (click)="toggleEmail()">
+        <span class="toggle-circle"></span>
+      </button>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-info">
+        <span class="setting-title">Notifications dans l'application</span>
+        <span class="setting-desc">Alertes en temps réel</span>
+      </div>
+      <button class="toggle" [class.active]="appNotifications" (click)="toggleApp()">
+        <span class="toggle-circle"></span>
+      </button>
+    </div>
+  </div>
+  <div class="settings-card">
+    <h3>Langue</h3>
+    <div class="select-wrapper">
+      <select [(ngModel)]="selectedLanguage">
+        <option *ngFor="let lang of languages" [value]="lang.code">
+          {{ lang.name }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+</div>

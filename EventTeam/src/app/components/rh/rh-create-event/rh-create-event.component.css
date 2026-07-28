@@ -1,0 +1,88 @@
+back-link {
+  display: inline-block;
+  color: #6b6d84;
+  font-size: 14px;
+  text-decoration: none;
+  margin-bottom: 12px;
+}
+.back-link:hover {
+  color: #201f36;
+}
+.form-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #201f36;
+  margin: 0 0 20px;
+}
+.form-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  max-width: 560px;
+  box-shadow: 0 1px 2px rgba(20, 21, 43, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+.field span {
+  font-size: 13px;
+  font-weight: 600;
+  color: #201f36;
+}
+.field input,
+.field textarea,
+.field select {
+  border: 1px solid #e2e3ee;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  color: #201f36;
+  font-family: inherit;
+  outline: none;
+}
+.field input:focus,
+.field textarea:focus,
+.field select:focus {
+  border-color: #6c5ce7;
+}
+.field-row {
+  display: flex;
+  gap: 16px;
+}
+.form-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+.btn-primary {
+  background: #6c5ce7;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-primary:hover {
+  background: #5a4bd4;
+}
+.btn-secondary {
+  background: #fff;
+  color: #201f36;
+  border: 1px solid #e2e3ee;
+  border-radius: 10px;
+  padding: 11px 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: #f4f5fa;
+}

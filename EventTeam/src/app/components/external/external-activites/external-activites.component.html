@@ -1,0 +1,33 @@
+<div class="page-header">
+  <h1>Activités</h1>
+  <p>{{ activities.length }} activité{{ activities.length > 1 ? 's' : '' }} disponible{{ activities.length > 1 ? 's' : '' }}</p>
+</div>
+
+<p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<div class="empty-state" *ngIf="!loading && activities.length === 0">
+  <div class="empty-icon">🎯</div>
+  <h3>Aucune activité pour le moment</h3>
+  <p>Les activités liées à vos événements apparaîtront ici.</p>
+</div>
+
+<div class="activities-grid" *ngIf="activities.length > 0">
+  <div class="activity-card" *ngFor="let activity of activities">
+    <div class="activity-thumb" [style.backgroundImage]="'url(https://images.unsplash.com/photo-1552664730-d307ca884978?w=400)'">
+      <span
+        class="status-pill"
+        [class.active]="activity.status === 'Actif'"
+        [class.planned]="activity.status === 'Planifié'"
+        [class.done]="activity.status === 'Terminé'"
+      >{{ activity.status || 'Planifié' }}</span>
+    </div>
+    <div class="activity-body">
+      <h3>{{ activity.name }}</h3>
+      <p class="description">{{ activity.description }}</p>
+      <div class="meta-row">
+        <span class="animateur">Animateur: <strong>{{ activity.animateur }}</strong></span>
+        <span class="date">{{ activity.startDate | date: 'dd MMM y' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

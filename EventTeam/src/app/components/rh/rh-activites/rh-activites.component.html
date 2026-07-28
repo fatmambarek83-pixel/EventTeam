@@ -1,0 +1,28 @@
+<div class="page-header row">
+  <div>
+    <h1>Activités</h1>
+    <p>{{ activities.length }} activités disponibles</p>
+  </div>
+  <button class="btn-primary" (click)="onCreate()">
+    <span>+</span> Nouvelle activité
+  </button>
+</div>
+<div class="activities-grid">
+  <div class="activity-card" *ngFor="let activity of activities">
+    <div class="activity-thumb" [style.backgroundImage]="'url(' + (activity.imageUrl || 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300') +')'">
+      <span class="status-pill" [ngClass]="statusClass(activity.status)">{{ activity.status }}</span>
+    </div>
+    <div class="activity-body">
+      <h3>{{ activity.name }}</h3>
+      <p class="desc">{{ activity.description }}</p>
+      <div class="meta-row">
+        <span>Animateur: {{ activity.facilitator }}</span>
+        <span>{{ activity.startDate | date: 'dd MMM yyyy' }}</span>
+      </div>
+      <div class="actions-row">
+        <button class="link-btn edit" (click)="onEdit(activity)">✏ Modifier</button>
+        <button class="link-btn delete" (click)="onDelete(activity)"> Supprimer</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,54 @@
+<div class="page-header">
+  <h1>Feedback</h1>
+  <p>Donnez votre avis sur les événements auxquels vous avez participé</p>
+</div>
+
+<p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<div class="empty-state" *ngIf="!loading && rows.length === 0">
+  <div class="empty-icon">💬</div>
+  <h3>Rien à évaluer pour l'instant</h3>
+  <p>Une fois votre participation acceptée à un événement, vous pourrez donner votre avis ici.</p>
+</div>
+
+<div class="feedback-list" *ngIf="rows.length > 0">
+  <div class="feedback-card" *ngFor="let row of rows">
+    <div class="feedback-row" (click)="!row.feedback && startEdit(row)">
+      <div class="thumb">🎉</div>
+      <div class="info">
+        <h3>{{ row.participation.eventName }}</h3>
+        <p class="date">{{ row.participation.date | date: 'dd MMM y' }}</p>
+        <p class="no-feedback" *ngIf="!row.feedback && !row.editing">Aucun avis encore</p>
+        <div class="stars-readonly" *ngIf="row.feedback && !row.editing">
+          <span *ngFor="let n of [1,2,3,4,5]" class="star" [class.filled]="n <= row.feedback.stars">★</span>
+          <span class="comment" *ngIf="row.feedback.commentaire">« {{ row.feedback.commentaire }} »</span>
+        </div>
+      </div>
+      <button class="link-btn" *ngIf="!row.editing" (click)="startEdit(row); $event.stopPropagation()">
+        {{ row.feedback ? 'Modifier' : 'Donner mon avis' }} ›
+      </button>
+    </div>
+
+    <div class="feedback-form" *ngIf="row.editing">
+      <div class="stars-input">
+        <span
+          *ngFor="let n of [1,2,3,4,5]"
+          class="star clickable"
+          [class.filled]="n <= row.draftStars"
+          (click)="setStars(row, n)"
+        >★</span>
+      </div>
+      <textarea
+        placeholder="Un commentaire à partager ? (optionnel)"
+        [(ngModel)]="row.draftComment"
+        rows="3"
+      ></textarea>
+      <div class="form-actions">
+        <button class="btn-primary" [disabled]="row.saving" (click)="submit(row)">
+          {{ row.saving ? 'Envoi...' : 'Envoyer' }}
+        </button>
+        <button class="btn-secondary" [disabled]="row.saving" (click)="cancelEdit(row)">Annuler</button>
+      </div>
+    </div>
+  </div>
+</div>
