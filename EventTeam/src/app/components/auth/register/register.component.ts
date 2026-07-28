@@ -17,7 +17,7 @@ export class RegisterComponent {
   Role = Role;
   ROLE_LABLES = ROLE_LABLES;
 
-  selectedRole: Role = Role.EMPLOYE;
+  selectedRole: Role | null = null;
   errorMessage = '';
   loading = false;
 
@@ -38,6 +38,11 @@ export class RegisterComponent {
   }
 
   onSubmit() {
+    if (!this.selectedRole) {
+      this.errorMessage = 'Veuillez sélectionner un type de compte.';
+      return;
+    }
+
     this.loading = true;
     this.errorMessage = '';
 

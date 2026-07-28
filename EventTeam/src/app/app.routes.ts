@@ -18,6 +18,7 @@ import { RhProfilComponent } from './components/rh/rh-profil/rh-profil.component
 import { RhParametresComponent } from './components/rh/rh-parametres/rh-parametres.component';
 import { adminGuard } from './guards/admin.guard';
 import { LoginComponent } from './components/auth/login/login.component';
+import { RegisterComponent } from './components/auth/register/register.component';
 import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashbord/admin-dashboard.component';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
@@ -37,6 +38,7 @@ import { ExternalParametresComponent } from './components/external/external-para
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   { path: 'reset-password/:token', component: ResetPasswordComponent },
   {

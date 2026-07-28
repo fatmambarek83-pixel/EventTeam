@@ -63,7 +63,7 @@
                  [(ngModel)]="form.companyName" required />
         </div>
 
-        <div *ngIf="selectedRole !== Role.EXTERNAL_COMPANY" class="form-row">
+        <div *ngIf="selectedRole === Role.EMPLOYE" class="form-row">
           <div class="form-group">
             <label for="prenom">Prénom</label>
             <input type="text" id="prenom" name="prenom" placeholder="Jean"
@@ -101,7 +101,7 @@
           {{errorMessage}}
         </p>
 
-        <button type="submit" class="submit-btn" [disabled]="loading || registerForm.invalid">
+        <button type="submit" class="submit-btn" [disabled]="loading || registerForm.invalid || !selectedRole">
           {{ loading ? 'Inscription...' : "S'inscrire" }}
         </button>
       </form>

@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit {
   Role = Role;
   ROLE_LABLES = ROLE_LABLES;
 
-  selectedRole: Role = Role.EMPLOYE;
+  selectedRole: Role | null = null;
   credentials = { email: '', password: '' };
   errorMessage = '';
   loading = false;
@@ -39,6 +39,11 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmit() {
+    if (!this.selectedRole) {
+      this.errorMessage = 'Veuillez sélectionner un type de compte.';
+      return;
+    }
+
     this.loading = true;
     this.errorMessage = '';
 
@@ -58,7 +63,7 @@ export class LoginComponent implements OnInit {
           return;
         }
 
-        this.router.navigate([ROLE_HOME_ROUTE[this.selectedRole]]);
+        this.router.navigate([ROLE_HOME_ROUTE[this.selectedRole!]]);
       },
       error: (err) => {
         this.loading = false;
