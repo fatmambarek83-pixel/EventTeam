@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { API_ENDPOINTS } from '../constants/api.constants';
 
 export interface RhAccount {
@@ -16,12 +16,17 @@ export interface AdminProfile {
   email: string;
   phone?: string;
   position?: string;
+  photo?: string | null;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdminService {
+
+  private profileSubject = new BehaviorSubject<AdminProfile | null>(null);
+  /** Shared stream so the sidebar, header, and profile page all stay in sync. */
+  profile$ = this.profileSubject.asObservable();
 
   constructor(private http: HttpClient) {}
   listRH(): Observable<RhAccount[]> {
@@ -34,9 +39,23 @@ export class AdminService {
     return this.http.delete<void>(`${API_ENDPOINTS.ADMIN_RH}/${id}`);
   }
   getProfile(): Observable<AdminProfile> {
-    return this.http.get<AdminProfile>(API_ENDPOINTS.ADMIN_PROFILE);
+    return this.http.get<AdminProfile>(API_ENDPOINTS.ADMIN_PROFILE).pipe(
+      tap(profile => this.profileSubject.next(profile))
+    );
   }
   updateProfile(data: { name: string; email: string; phone: string; position: string }): Observable<AdminProfile> {
-    return this.http.put<AdminProfile>(API_ENDPOINTS.ADMIN_PROFILE, data);
+    return this.http.put<AdminProfile>(API_ENDPOINTS.ADMIN_PROFILE, data).pipe(
+      tap(profile => this.profileSubject.next(profile))
+    );
+  }
+  updatePhoto(photo: string): Observable<AdminProfile> {
+    return this.http.put<AdminProfile>(API_ENDPOINTS.ADMIN_PROFILE_PHOTO, { photo }).pipe(
+      tap(profile => this.profileSubject.next(profile))
+    );
+  }
+  deletePhoto(): Observable<AdminProfile> {
+    return this.http.delete<AdminProfile>(API_ENDPOINTS.ADMIN_PROFILE_PHOTO).pipe(
+      tap(profile => this.profileSubject.next(profile))
+    );
   }
 }

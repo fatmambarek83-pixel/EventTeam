@@ -79,4 +79,19 @@ public class AdminController {
         admin.setPosition(request.getPosition());
         return adminRepository.save(admin);
     }
+    @PutMapping("/profile/photo")
+    public Admin updatePhoto(Authentication authentication,@RequestBody Map<String,String> body){
+        Admin admin =adminRepository.findByEmail(authentication.getName())
+                .orElseThrow(()->new RuntimeException("Administrateur introuvable"));
+        admin.setPhoto(body.get("photo"));
+        return adminRepository.save(admin);
+    }
+    @DeleteMapping("profile/photo")
+    public Admin deletePhoto(Authentication authentication){
+        Admin admin =adminRepository.findByEmail(authentication.getName())
+                .orElseThrow(()->new RuntimeException("Administrateur introuvable"));
+        admin.setPhoto(null);
+        return adminRepository.save(admin);
+    }
+
 }

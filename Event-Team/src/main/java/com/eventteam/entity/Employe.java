@@ -40,7 +40,8 @@ public class Employe {
     private String image;
     private String poste;
     private String departement;
-
+    @Column(columnDefinition="TEXT")
+    private String photo;
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Builder.Default

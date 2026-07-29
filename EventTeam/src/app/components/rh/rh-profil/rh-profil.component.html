@@ -4,12 +4,27 @@
 </div>
 <div class="profile-card">
   <div class="profile-summary">
-    <div class="avatar-lg" [style.background]="currentUser?.avatarColor || '#7c6cf2'">
-      {{ currentUser?.avatarInitials }}
+    <div class="avatar-lg" [style.background]="!photo ? (currentUser?.avatarColor || '#7c6cf2') : null">
+      <img *ngIf="photo" [src]="photo" alt="Photo de profil" class="avatar-img">
+      <span *ngIf="!photo">{{ getInitials(currentUser?.name) }}</span>
+
+      <div class="avatar-spinner-overlay" *ngIf="photoUploading">
+        <div class="spinner-small"></div>
+      </div>
+
+      <label class="avatar-edit" title="Modifier la photo">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="white" stroke-width="2.5">
+          <path d="M12 20h9M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+        <input type="file" accept="image/*" hidden (change)="onPhotoSelected($event)">
+      </label>
+
+      <button class="avatar-remove" *ngIf="photo" title="Supprimer la photo" (click)="onDeletePhoto()">×</button>
     </div>
     <div>
       <h3>{{ currentUser?.name }}</h3>
       <span class="role-badge">{{ currentUser?.role }}</span>
+      <p class="photo-error" *ngIf="photoError">{{ photoError }}</p>
     </div>
   </div>
   <form [formGroup]="form" (ngSubmit)="onSave()" class="profile-form">

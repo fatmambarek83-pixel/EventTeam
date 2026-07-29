@@ -1,5 +1,5 @@
 <div class="admin-container">
-  <app-sidebar></app-sidebar>
+  <app-sidebar [currentUser]="currentUser"></app-sidebar>
   <main class="main-content">
     <header class="top-header">
       <!-- Zone gauche: KHAWYA (recherche supprimee) -->
@@ -38,8 +38,11 @@
         </div>
         <!-- Profile badge -->
         <div class="profile-badge">
-          <span class="avatar">AS</span>
-          <span class="profile-name">Admin S.</span>
+          <span class="avatar">
+            <img *ngIf="photo" [src]="photo" alt="Photo de profil" class="avatar-img">
+            <ng-container *ngIf="!photo">{{ (currentUser?.email || 'A').charAt(0).toUpperCase() }}</ng-container>
+          </span>
+          <span class="profile-name">{{ currentUser?.name || 'Administrateur' }}</span>
         </div>
       </div>
     </header>

@@ -3,7 +3,14 @@
     <span class="brand-icon">⚡</span>
     <span class="brand-name">EVENT TEAM</span>
   </div>
-  <span class="role-badge">Entreprise Ext.</span>
+  <div class="profile-top">
+    <div class="avatar-top" [style.background]="!photo ? '#6c5ce7' : null">
+      <img *ngIf="photo" [src]="photo" alt="Photo de profil" class="avatar-top-img">
+      <span *ngIf="!photo">{{ getInitials(currentUser?.name) }}</span>
+    </div>
+    <span class="user-name-top">{{ currentUser?.name || 'Entreprise Ext.' }}</span>
+    <span class="role-badge">Entreprise Ext.</span>
+  </div>
   <nav class="nav-main">
     <a
       *ngFor="let item of navItems"
@@ -40,18 +47,14 @@
 </span>
       <span class="nav-label">{{ item.label }}</span>
     </a>
+    <a class="nav-item nav-item-logout" (click)="onLogout()">
+      <span class="nav-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+          <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+        </svg>
+      </span>
+      <span class="nav-label">Déconnexion</span>
+    </a>
   </nav>
-  <div class="user-footer" *ngIf="currentUser">
-    <div class="avatar" [style.background]="currentUser.avatarColor || '#f59e0b'">
-      {{ currentUser.avatarInitials }}
-    </div>
-    <div class="user-info">
-      <span class="user-name">{{ currentUser.name }}</span>
-      <span class="user-role">Entreprise Ext.</span>
-    </div>
-    <button class="logout-btn" type="button" title="Se déconnecter" (click)="onLogout()">
-      <svg class="logout-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-        <polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-    </button>
-  </div>
 </aside>

@@ -8,6 +8,7 @@ export interface BaseUser {
   avatarInitials?: string;
   avatarColor?: string;
   status?: 'active' | 'pending' | 'rejected';
+  photo?: string | null;
 }
 
 export interface Employe extends BaseUser {

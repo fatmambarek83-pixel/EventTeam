@@ -35,6 +35,8 @@ public class ExternalCompany {
     private AccountStatus status =AccountStatus.PENDING;
     private String contactName;
     private String phone;
+    @Column(columnDefinition="TEXT")
+    private String photo;
     @OneToMany(mappedBy = "externalCompany")
     @JsonIgnore
     @Builder.Default

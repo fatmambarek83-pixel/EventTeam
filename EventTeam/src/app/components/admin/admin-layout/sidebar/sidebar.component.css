@@ -24,7 +24,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #6c5ce7, #8b7cf6);
+  background: #6c5ce7;
   border-radius: 8px;
   font-size: 16px;
 }
@@ -33,16 +33,6 @@
   font-weight: 700;
   font-size: 15px;
   letter-spacing: 0.5px;
-}
-.role-badge {
-  display: inline-block;
-  background: rgba(108, 92, 231, 0.25);
-  color: #b3a6ff;
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 20px;
-  width: fit-content;
 }
 .profile-top {
   display: flex;
@@ -56,6 +46,7 @@
   width: 56px;
   height: 56px;
   border-radius: 50%;
+  background: #6c5ce7;
   color: #fff;
   display: flex;
   align-items: center;
@@ -78,6 +69,16 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.role-badge {
+  display: inline-block;
+  background: rgba(108, 92, 231, 0.25);
+  color: #b3a6ff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+  width: fit-content;
 }
 .nav-main,
 .nav-bottom {

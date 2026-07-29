@@ -15,7 +15,8 @@ export class ProfileComponent implements OnInit {
     name:'',
     email:'',
     phone:'',
-    position:''
+    position:'',
+    photo: null as string | null
   };
   password={
     current:'',
@@ -30,6 +31,10 @@ export class ProfileComponent implements OnInit {
   lastEditDate: string = '—';
   twoFactorEnabled = false;
 
+  photoUploading = false;
+  photoError = '';
+  private static readonly MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2MB
+
   constructor(private adminService: AdminService) {}
 
   ngOnInit(): void {
@@ -40,7 +45,8 @@ export class ProfileComponent implements OnInit {
           name: data.name || '',
           email: data.email || '',
           phone: data.phone || '',
-          position: data.position || ''
+          position: data.position || '',
+          photo: data.photo || null
         };
         this.loading = false;
       },
@@ -60,6 +66,67 @@ export class ProfileComponent implements OnInit {
       .join('')
       .toUpperCase()
       .slice(0, 2);
+  }
+  getEmailInitial(email?: string): string {
+    if (!email) return '?';
+    return email.charAt(0).toUpperCase();
+  }
+
+  onPhotoSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    this.photoError = '';
+
+    if (!file.type.startsWith('image/')) {
+      this.photoError = "Le fichier doit être une image.";
+      input.value = '';
+      return;
+    }
+    if (file.size > ProfileComponent.MAX_PHOTO_SIZE) {
+      this.photoError = "L'image ne doit pas dépasser 2 Mo.";
+      input.value = '';
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      this.photoUploading = true;
+      this.adminService.updatePhoto(base64).subscribe({
+        next: (data) => {
+          this.profile.photo = data.photo || null;
+          this.photoUploading = false;
+        },
+        error: (err) => {
+          console.error('Erreur upload photo:', err);
+          this.photoError = "Échec de l'envoi de la photo.";
+          this.photoUploading = false;
+        }
+      });
+    };
+    reader.onerror = () => {
+      this.photoError = "Impossible de lire le fichier.";
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
+  }
+
+  onDeletePhoto(): void {
+    this.photoUploading = true;
+    this.photoError = '';
+    this.adminService.deletePhoto().subscribe({
+      next: () => {
+        this.profile.photo = null;
+        this.photoUploading = false;
+      },
+      error: (err) => {
+        console.error('Erreur suppression photo:', err);
+        this.photoError = "Échec de la suppression de la photo.";
+        this.photoUploading = false;
+      }
+    });
   }
 
   onSave():void{

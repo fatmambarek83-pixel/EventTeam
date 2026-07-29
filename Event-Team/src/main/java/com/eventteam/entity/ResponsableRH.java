@@ -28,4 +28,6 @@ public class ResponsableRH {
     @Builder.Default
     private String role = "RESPONSABLE_RH";
     private String departement;
+    @Column(columnDefinition="TEXT")
+    private String photo;
 }

@@ -39,6 +39,12 @@
   position: relative;
   flex-shrink: 0;
 }
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
 .avatar-edit {
   position: absolute;
   bottom: 0;
@@ -52,6 +58,49 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+}
+.avatar-remove {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: #ef4444;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 13px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+.avatar-spinner-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.avatar-spinner-overlay .spinner-small {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.photo-error {
+  color: #ef4444;
+  font-size: 12px;
+  margin: 6px 0 0;
 }
 .profile-info h2 {
   font-size: 20px;
@@ -79,8 +128,6 @@
   padding: 4px 10px;
   border-radius: 20px;
 }
-
-/* Cards */
 .info-card, .password-card, .security-card {
   background: #fff;
   border-radius: 16px;
@@ -96,7 +143,6 @@
   font-weight: 600;
 }
 
-/* Card header row: title + right-aligned meta */
 .card-header {
   display: flex;
   align-items: center;
@@ -110,7 +156,6 @@
   color: #94a3b8;
 }
 
-/* Alerts (reused pattern) */
 .alert {
   display: flex;
   align-items: center;
@@ -146,7 +191,6 @@
   opacity: 1;
 }
 
-/* Loading */
 .loading-state {
   text-align: center;
   padding: 32px;
@@ -162,7 +206,7 @@
   margin: 0 auto 12px;
 }
 
-/* Form */
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -216,8 +260,6 @@
   color: #15803d;
   font-weight: 500;
 }
-
-/* Boutons */
 .btn-primary {
   background: #4f46e5;
   color: white;
@@ -270,7 +312,6 @@
   text-decoration: underline;
 }
 
-/* Sécurité */
 .security-info {
   display: flex;
   flex-direction: column;
@@ -324,7 +365,6 @@
   color: #15803d;
 }
 
-/* Toggle switch */
 .btn-toggle {
   width: 44px;
   height: 24px;
@@ -354,8 +394,6 @@
 .btn-toggle.active .toggle-circle {
   transform: translateX(20px);
 }
-
-/* Utilities */
 .spinner-small {
   width: 14px;
   height: 14px;
@@ -369,7 +407,6 @@
   to { transform: rotate(360deg); }
 }
 
-/* Responsive */
 @media (max-width: 560px) {
   .form-row {
     grid-template-columns: 1fr;

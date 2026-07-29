@@ -4,130 +4,295 @@ import { Observable, forkJoin, map } from 'rxjs';
 import { API_ENDPOINTS } from '../constants/api.constants';
 import {
   Activity,
-  EventItem,
-  Participation,
-  FeedbackEvent,
-  PendingAccount,
-  ExternalCompany,
+  ActivityStatus,
   DashboardStats,
+  EventItem,
+  EventStatus,
+  ExternalCompany as RhExternalCompany,
+  FeedbackEvent,
+  Participation,
+  ParticipationStatus,
+  PendingAccount,
+  Review,
 } from '../models/rh.model';
+import { Employe, ExternalCompany } from '../models/user.model';
+import { Event as BackendEvent } from '../models/event.model';
+import { Activity as BackendActivity } from '../models/activity.model';
+import { Feedback as BackendFeedback } from '../models/feedback.model';
+import { Participation as BackendParticipation } from '../models/participation.model';
+import { EmployeeService } from './employee.service';
+import { ExternalService } from './external.service';
 
-interface BackendAccount { id: number; name: string; email: string; status: string; }
-interface BackendEvent {
-  id: number; name: string; description?: string;
-  startDate: string; endDate: string; location: string;
-  capacity: number; participantsCount?: number; status: string; imageUrl?: string;
-}
-
-function initialsOf(name: string): string {
-  return (name || '').trim().split(/\s+/).slice(0, 2)
-    .map(part => part.charAt(0).toUpperCase()).join('');
-}
-
-function toEventItem(e: BackendEvent): EventItem {
-  return {
-    id: String(e.id), name: e.name, description: e.description ?? '',
-    date: e.startDate, location: e.location, maxCapacity: e.capacity,
-    registeredCount: e.participantsCount ?? 0,
-    activityId: '', status: e.status as EventItem['status'], imageUrl: e.imageUrl,
-  };
-}
-
-function toBackendEvent(item: Partial<EventItem>): Partial<BackendEvent> {
-  const payload: Partial<BackendEvent> = {};
-  if (item.name !== undefined) payload.name = item.name;
-  if (item.description !== undefined) payload.description = item.description;
-  if (item.date !== undefined) { payload.startDate = item.date; payload.endDate = item.date; }
-  if (item.location !== undefined) payload.location = item.location;
-  if (item.maxCapacity !== undefined) payload.capacity = item.maxCapacity;
-  if (item.status !== undefined) payload.status = item.status;
-  return payload;
-}
-
+/**
+ * Aggregates data for the RH ("Responsable RH") dashboard screens.
+ *
+ * NOTE: this file was reconstructed after it got overwritten by a previous
+ * change (it was accidentally replaced with the RH *profile/photo* service,
+ * now living in `responsable-rh.service.ts`). It's rebuilt from how every
+ * rh-* component actually calls it, wired to the real Spring endpoints
+ * (dashboard, events, activities, feedbacks, participations, employes,
+ * external-companies). Double check the mapped fields (especially
+ * `description`/`activityId` on events and `facilitator` on activities,
+ * which the backend doesn't send back 1:1) against what you actually want
+ * displayed.
+ */
 @Injectable({ providedIn: 'root' })
 export class RhService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private employeeService: EmployeeService,
+    private externalService: ExternalService
+  ) {}
 
-  getEvents(): Observable<EventItem[]> {
-    return this.http.get<BackendEvent[]>(API_ENDPOINTS.EVENTS)
-      .pipe(map(events => events.map(toEventItem)));
-  }
-  getEventById(id: string): Observable<EventItem> {
-    return this.http.get<BackendEvent>(`${API_ENDPOINTS.EVENTS}/${id}`).pipe(map(toEventItem));
-  }
-  createEvent(event: Omit<EventItem, 'id' | 'registeredCount'>): Observable<EventItem> {
-    return this.http.post<BackendEvent>(API_ENDPOINTS.EVENTS, toBackendEvent(event)).pipe(map(toEventItem));
-  }
-  updateEvent(id: string, changes: Partial<EventItem>): Observable<EventItem> {
-    return this.http.put<BackendEvent>(`${API_ENDPOINTS.EVENTS}/${id}`, toBackendEvent(changes)).pipe(map(toEventItem));
-  }
-  deleteEvent(id: string): Observable<void> {
-    return this.http.delete<void>(`${API_ENDPOINTS.EVENTS}/${id}`);
-  }
-  getUpcomingEvents(): Observable<EventItem[]> {
-    return this.http.get<BackendEvent[]>(`${API_ENDPOINTS.EVENTS}?status=À venir`)
-      .pipe(map(events => events.map(toEventItem)));
-  }
-  getActivities(): Observable<Activity[]> {
-    return this.http.get<Activity[]>(API_ENDPOINTS.ACTIVITIES);
-  }
-  deleteActivity(id: string): Observable<void> {
-    return this.http.delete<void>(`${API_ENDPOINTS.ACTIVITIES}/${id}`);
-  }
-  getParticipations(): Observable<Participation[]> {
-    return this.http.get<Participation[]>(API_ENDPOINTS.PARTICIPATIONS);
-  }
-  updateParticipationStatus(id: string, status: 'Accepté' | 'Refusé'): Observable<Participation> {
-    return this.http.put<Participation>(`${API_ENDPOINTS.PARTICIPATIONS}/${id}`, { status });
-  }
-  getFeedbackEvents(): Observable<FeedbackEvent[]> {
-    return this.http.get<FeedbackEvent[]>(API_ENDPOINTS.FEEDBACKS);
-  }
-  getFeedbackByEventId(eventId: string): Observable<FeedbackEvent> {
-    return this.http.get<FeedbackEvent>(`${API_ENDPOINTS.FEEDBACKS}/event/${eventId}`);
-  }
+  // ---------------------------------------------------------------------
+  // Comptes en attente / actifs
+  // ---------------------------------------------------------------------
+
   getPendingAccounts(): Observable<PendingAccount[]> {
-    return forkJoin({
-      employees: this.http.get<BackendAccount[]>(`${API_ENDPOINTS.EMPLOYES}/pending`),
-      companies: this.http.get<BackendAccount[]>(`${API_ENDPOINTS.EXTERNAL_COMPANIES}/pending`),
-    }).pipe(
-      map(({ employees, companies }) => [
-        ...employees.map((e): PendingAccount => ({
-          id: String(e.id), name: e.name, email: e.email,
-          category: 'Employé interne', type: 'Employé', avatarInitials: initialsOf(e.name),
-        })),
-        ...companies.map((c): PendingAccount => ({
-          id: String(c.id), name: c.name, email: c.email,
-          category: 'Entreprise externe', type: 'Entreprise Ext.', avatarInitials: initialsOf(c.name),
-        })),
+    return forkJoin([this.employeeService.getPending(), this.externalService.getPending()]).pipe(
+      map(([employes, companies]) => [
+        ...employes.map((e) => this.toPendingAccount(e, 'Employé')),
+        ...companies.map((c) => this.toPendingAccount(c, 'Entreprise Ext.')),
       ])
     );
   }
+
   getActiveEmployees(): Observable<PendingAccount[]> {
-    return this.http.get<BackendAccount[]>(API_ENDPOINTS.EMPLOYES).pipe(
-      map(list => list.filter(e => e.status === 'APPROVED').map((e): PendingAccount => ({
-        id: String(e.id), name: e.name, email: e.email,
-        category: 'Employé interne', type: 'Employé', avatarInitials: initialsOf(e.name),
-      })))
+    return this.employeeService.getAll().pipe(
+      map((list) =>
+        list
+          .filter((e) => this.isApproved(e.status))
+          .map((e) => this.toPendingAccount(e, 'Employé'))
+      )
     );
   }
-  getExternalCompanies(): Observable<ExternalCompany[]> {
-    return this.http.get<BackendAccount[]>(API_ENDPOINTS.EXTERNAL_COMPANIES).pipe(
-      map(list => list.filter(c => c.status === 'APPROVED').map((c): ExternalCompany => ({
-        id: String(c.id), name: c.name, email: c.email,
-        status: 'Accepté', avatarInitials: initialsOf(c.name),
-      })))
+
+  getExternalCompanies(): Observable<RhExternalCompany[]> {
+    return this.externalService.getAll().pipe(
+      map((list) =>
+        list
+          .filter((c) => this.isApproved(c.status))
+          .map((c) => ({
+            id: String(c.id),
+            name: c.name || '',
+            email: c.email || '',
+            status: 'Accepté' as const,
+            avatarInitials: this.initials(c.name),
+          }))
+      )
     );
   }
-  activateAccount(account: PendingAccount): Observable<void> {
-    const base = account.type === 'Employé' ? API_ENDPOINTS.EMPLOYES : API_ENDPOINTS.EXTERNAL_COMPANIES;
-    return this.http.put<void>(`${base}/${account.id}/validate`, {});
+
+  activateAccount(account: PendingAccount): Observable<any> {
+    const id = Number(account.id);
+    return account.type === 'Employé'
+      ? this.employeeService.validate(id)
+      : this.externalService.validate(id);
   }
-  rejectAccount(account: PendingAccount): Observable<void> {
-    const base = account.type === 'Employé' ? API_ENDPOINTS.EMPLOYES : API_ENDPOINTS.EXTERNAL_COMPANIES;
-    return this.http.put<void>(`${base}/${account.id}/reject`, {});
+
+  rejectAccount(account: PendingAccount): Observable<any> {
+    const id = Number(account.id);
+    return account.type === 'Employé'
+      ? this.employeeService.reject(id)
+      : this.externalService.reject(id);
   }
+
+  private toPendingAccount(
+    item: Employe | ExternalCompany,
+    type: 'Employé' | 'Entreprise Ext.'
+  ): PendingAccount {
+    const isEmploye = type === 'Employé';
+    const employe = item as Employe;
+    const company = item as ExternalCompany;
+    return {
+      id: String(item.id),
+      name: item.name || '',
+      email: item.email || '',
+      category: isEmploye
+        ? employe.departement || employe.poste || 'Employé'
+        : company.contactName || 'Entreprise',
+      type,
+      avatarInitials: this.initials(item.name),
+    };
+  }
+
+  private isApproved(status: unknown): boolean {
+    return (status as string) === 'APPROVED';
+  }
+
+  private initials(name?: string): string {
+    if (!name) return '';
+    const parts = name.trim().split(/\s+/);
+    const first = parts[0]?.charAt(0) ?? '';
+    const second = parts[1]?.charAt(0) ?? '';
+    return (first + second).toUpperCase();
+  }
+
+  // ---------------------------------------------------------------------
+  // Événements
+  // ---------------------------------------------------------------------
+
+  getEvents(): Observable<EventItem[]> {
+    return this.http
+      .get<BackendEvent[]>(API_ENDPOINTS.EVENTS)
+      .pipe(map((list) => list.map((e) => this.mapEvent(e))));
+  }
+
+  getEventById(id: string): Observable<EventItem> {
+    return this.http
+      .get<BackendEvent>(`${API_ENDPOINTS.EVENTS}/${id}`)
+      .pipe(map((e) => this.mapEvent(e)));
+  }
+
+  getUpcomingEvents(): Observable<EventItem[]> {
+    return this.getEvents().pipe(
+      map((events) =>
+        events
+          .filter((e) => e.status === 'À venir')
+          .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+          .slice(0, 4)
+      )
+    );
+  }
+
+  createEvent(payload: Partial<EventItem>): Observable<EventItem> {
+    return this.http
+      .post<BackendEvent>(API_ENDPOINTS.EVENTS, this.toBackendEventPayload(payload))
+      .pipe(map((e) => this.mapEvent(e)));
+  }
+
+  updateEvent(id: string, payload: Partial<EventItem>): Observable<EventItem> {
+    return this.http
+      .put<BackendEvent>(`${API_ENDPOINTS.EVENTS}/${id}`, this.toBackendEventPayload(payload))
+      .pipe(map((e) => this.mapEvent(e)));
+  }
+
+  deleteEvent(id: string): Observable<void> {
+    return this.http.delete<void>(`${API_ENDPOINTS.EVENTS}/${id}`);
+  }
+
+  private toBackendEventPayload(payload: Partial<EventItem>) {
+    return {
+      name: payload.name,
+      startDate: payload.date,
+      endDate: payload.date,
+      location: payload.location,
+      capacity: payload.maxCapacity,
+      status: payload.status,
+    };
+  }
+
+  private mapEvent(e: BackendEvent): EventItem {
+    return {
+      id: e.id != null ? String(e.id) : '',
+      name: e.name || e.title || '',
+      description: '',
+      date: e.startDate,
+      location: e.location || '',
+      maxCapacity: e.capacity ?? 0,
+      registeredCount: e.participantsCount ?? 0,
+      activityId: '',
+      status: (e.status as EventStatus) || 'À venir',
+      imageUrl: undefined,
+    };
+  }
+
+  // ---------------------------------------------------------------------
+  // Activités
+  // ---------------------------------------------------------------------
+
+  getActivities(): Observable<Activity[]> {
+    return this.http
+      .get<BackendActivity[]>(API_ENDPOINTS.ACTIVITIES)
+      .pipe(map((list) => list.map((a) => this.mapActivity(a))));
+  }
+
+  deleteActivity(id: string): Observable<void> {
+    return this.http.delete<void>(`${API_ENDPOINTS.ACTIVITIES}/${id}`);
+  }
+
+  private mapActivity(a: BackendActivity): Activity {
+    return {
+      id: a.id != null ? String(a.id) : '',
+      name: a.name || '',
+      description: a.description || '',
+      startDate: a.startDate || '',
+      endDate: a.endDate || '',
+      facilitator: a.animateur || '',
+      status: (a.status as ActivityStatus) || 'Planifié',
+      imageUrl: undefined,
+    };
+  }
+
+  // ---------------------------------------------------------------------
+  // Dashboard
+  // ---------------------------------------------------------------------
+
   getDashboardStats(): Observable<DashboardStats> {
     return this.http.get<DashboardStats>(API_ENDPOINTS.DASHBOARD_STATS);
+  }
+
+  // ---------------------------------------------------------------------
+  // Participations
+  // ---------------------------------------------------------------------
+
+  getParticipations(): Observable<Participation[]> {
+    return this.http
+      .get<BackendParticipation[]>(API_ENDPOINTS.PARTICIPATIONS)
+      .pipe(map((list) => list.map((p) => this.mapParticipation(p))));
+  }
+
+  updateParticipationStatus(id: string, status: 'Accepté' | 'Refusé'): Observable<any> {
+    return this.http.put(`${API_ENDPOINTS.PARTICIPATIONS}/${id}`, { status });
+  }
+
+  private mapParticipation(p: BackendParticipation): Participation {
+    return {
+      id: String(p.id),
+      participantName: p.participantName || '',
+      participantDepartment: p.participantDepartment || '',
+      avatarInitials: p.avatarInitials || '',
+      eventId: String(p.eventId),
+      eventName: p.eventName || '',
+      eventLocation: p.eventLocation || '',
+      date: p.date || '',
+      status: p.status as ParticipationStatus,
+    };
+  }
+
+  // ---------------------------------------------------------------------
+  // Feedbacks
+  // ---------------------------------------------------------------------
+
+  getFeedbackEvents(): Observable<FeedbackEvent[]> {
+    return forkJoin([this.getEvents(), this.http.get<BackendFeedback[]>(API_ENDPOINTS.FEEDBACKS)]).pipe(
+      map(([events, feedbacks]) =>
+        events.map((ev) => {
+          const evFeedbacks = feedbacks.filter((f) => String(f.eventId) === ev.id);
+          return {
+            id: ev.id,
+            eventId: ev.id,
+            eventName: ev.name,
+            eventDate: ev.date,
+            imageUrl: ev.imageUrl,
+            reviews: evFeedbacks.map((f) => this.mapReview(f, ev.date)),
+          } as FeedbackEvent;
+        })
+      )
+    );
+  }
+
+  getFeedbackByEventId(eventId: string): Observable<FeedbackEvent | undefined> {
+    return this.getFeedbackEvents().pipe(map((list) => list.find((f) => f.eventId === eventId)));
+  }
+
+  private mapReview(f: BackendFeedback, fallbackDate: string): Review {
+    return {
+      id: f.id != null ? String(f.id) : '',
+      authorName: f.auteurName || 'Anonyme',
+      rating: f.stars ?? 0,
+      comment: f.commentaire || '',
+      date: fallbackDate,
+    };
   }
 }

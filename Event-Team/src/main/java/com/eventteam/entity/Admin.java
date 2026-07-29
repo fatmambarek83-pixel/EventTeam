@@ -25,4 +25,6 @@ public class Admin {
     private String password;
     @Builder.Default
     private String role="ADMIN";
+    @Column(columnDefinition="TEXT")
+    private String photo;
 }
