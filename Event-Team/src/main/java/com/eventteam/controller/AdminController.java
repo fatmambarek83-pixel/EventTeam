@@ -57,6 +57,11 @@ public class AdminController {
         return responsableRHService.findAll();
     }
 
+    @GetMapping("/rh/{id}")
+    public ResponsableRH getRH(@PathVariable Long id) {
+        return responsableRHService.findById(id);
+    }
+
     @DeleteMapping("/rh/{id}")
     public void deleteRH(@PathVariable Long id) {
         responsableRHService.delete(id);

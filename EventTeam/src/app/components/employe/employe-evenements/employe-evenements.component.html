@@ -18,7 +18,11 @@
 </div>
 
 <div class="events-grid" *ngIf="filteredRows.length > 0">
-  <div class="event-card" *ngFor="let row of filteredRows">
+  <div
+    class="event-card clickable"
+    *ngFor="let row of filteredRows"
+    [routerLink]="['/employee/evenements', row.event.id]"
+  >
     <div class="event-thumb" [style.backgroundImage]="'url(https://images.unsplash.com/photo-1511578314322-379afb476865?w=400)'">
       <span class="status-pill" [class.done]="row.event.status === 'Terminé'">
         {{ row.event.status || 'À venir' }}
@@ -53,14 +57,14 @@
           <button
             class="link-btn cancel"
             [disabled]="pendingActionEventId === row.event.id"
-            (click)="onAnnuler(row)"
+            (click)="onAnnuler(row); $event.stopPropagation()"
           >Annuler</button>
         </ng-container>
         <ng-template #joinBlock>
           <button
             class="btn-primary full"
             [disabled]="row.event.status === 'Terminé' || pendingActionEventId === row.event.id"
-            (click)="onParticiper(row)"
+            (click)="onParticiper(row); $event.stopPropagation()"
           >Participer</button>
         </ng-template>
       </div>

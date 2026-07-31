@@ -1,74 +1,92 @@
-<div class="dashboard-wrapper">
-  <div class="welcome-section">
-    <h1>Bonjour Admin 👋</h1>
-    <p>Voici un aperçu de vos activités de team building.</p>
+<div class="page-header">
+  <h1>Bonjour {{ firstName }} 👋</h1>
+  <p>Voici un aperçu de vos activités de team building.</p>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon purple">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="4" width="18" height="18" rx="2"/>
+        <line x1="16" y1="2" x2="16" y2="6"/>
+        <line x1="8" y1="2" x2="8" y2="6"/>
+        <line x1="3" y1="10" x2="21" y2="10"/>
+      </svg>
+    </div>
+    <div class="stat-value">{{ stats.totalEvents }}</div>
+    <div class="stat-label">Événements totaux</div>
+    <div class="stat-delta">{{ stats.totalEvents > 0 ? 'sur toute la plateforme' : 'Aucun événement' }}</div>
   </div>
-  <div class="stats-grid">
-    <!-- Carte 1: Total evenements -->
-    <div class="stat-card">
-      <div class="icon-wrapper purple">📅</div>
-      <div class="stat-val">{{ stats.totalEvents }}</div>
-      <div class="stat-title">Événements totaux</div>
-      <!-- BDALT: Message dynamique selon data -->
-      <span class="stat-sub">{{ stats.totalEvents > 0 ? '+2 ce mois' : 'Aucun événement' }}</span>
+
+  <div class="stat-card">
+    <div class="stat-icon teal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
     </div>
-    <div class="stat-card">
-      <div class="icon-wrapper blue">⚡</div>
-      <div class="stat-val">{{ stats.activeActivities }}</div>
-      <div class="stat-title">Activités actives</div>
-      <span class="stat-sub">sur {{ stats.totalEvents }} disponibles</span>
-    </div>
-    <div class="stat-card">
-      <div class="icon-wrapper green">👥</div>
-      <div class="stat-val">{{ stats.totalParticipants }}</div>
-      <div class="stat-title">Total participants</div>
-      <span class="stat-sub">tous événements</span>
-    </div>
-    <div class="stat-card">
-      <div class="icon-wrapper yellow">⭐</div>
-      <!-- BDALT: Affiche "-" ken ma famesh rating -->
-      <div class="stat-val">{{ stats.averageRating > 0 ? stats.averageRating : '-' }}</div>
-      <div class="stat-title">Note moyenne</div>
-      <span class="stat-sub">sur 5 étoiles</span>
-    </div>
+    <div class="stat-value">{{ stats.activeActivities }}</div>
+    <div class="stat-label">Événements à venir</div>
+    <div class="stat-delta">sur {{ stats.totalEvents }} au total</div>
   </div>
-  <div class="events-section">
-    <div class="section-header">
-      <h2>Prochains événements</h2>
-      <a href="#" class="view-all">Voir tous ➔</a>
+
+  <div class="stat-card">
+    <div class="stat-icon green">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
     </div>
-    <div class="events-grid" *ngIf="upcomingEvents.length > 0">
-      <div class="event-card" *ngFor="let event of upcomingEvents">
-        <!-- Date avec theme color -->
-        <div class="event-date" [ngClass]="event.themeClass + '-date'">
-          <span class="day">{{ event.day }}</span>
-          <span class="month">{{ event.month }}</span>
-        </div>
-        <div class="event-details">
-          <h3>{{ event.title }} <span class="badge">{{ event.status }}</span></h3>
-          <p class="location">📍 {{ event.location }}</p>
-          <!-- Barre de progression participants -->
-          <div class="progress-bar-container">
-            <div class="progress-bar" [ngClass]="event.themeClass + '-bar'" [style.width.%]="event.progress"></div>
-          </div>
-          <span class="participants">{{ event.currentParticipants }}/{{ event.maxParticipants }} participants</span>
-        </div>
-        <div class="image-placeholder">
-          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#94a3b8" stroke-width="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <circle cx="8.5" cy="8.5" r="1.5"></circle>
-            <polyline points="21 15 16 10 5 21"></polyline>
-          </svg>
-        </div>
+    <div class="stat-value">{{ stats.totalParticipants }}</div>
+    <div class="stat-label">Total participants</div>
+    <div class="stat-delta">tous événements</div>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon yellow">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    </div>
+    <div class="stat-value">{{ stats.averageRating > 0 ? stats.averageRating : '-' }}</div>
+    <div class="stat-label">Note moyenne</div>
+    <div class="stat-delta">sur 5 étoiles</div>
+  </div>
+</div>
+
+<!-- ÉVÉNEMENTS -->
+<div class="section-header">
+  <h2>Prochains événements</h2>
+</div>
+
+<div class="empty-state" *ngIf="!loading && upcomingEvents.length === 0">
+  <div class="empty-icon">📭</div>
+  <h3>Aucun événement pour le moment</h3>
+  <p>Les événements créés par les RH Managers apparaîtront ici.</p>
+</div>
+
+<div class="loading-state" *ngIf="loading">Chargement...</div>
+
+<div class="events-grid" *ngIf="!loading && upcomingEvents.length > 0">
+  <div
+    class="event-card clickable"
+    *ngFor="let event of upcomingEvents"
+    [routerLink]="['/admin/evenements', event.id]"
+  >
+    <div class="event-thumb" [style.backgroundImage]="'url(' + (event.imageUrl || 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=300') + ')'">
+      <div class="date-badge">
+        <span class="day">{{ event.day }}</span>
+        <span class="month">{{ event.month }}</span>
       </div>
     </div>
-    <div class="empty-state" *ngIf="!loading && upcomingEvents.length === 0">
-      <div class="empty-icon">📭</div>
-      <h3>Aucun événement pour le moment</h3>
-      <p>Les événements créés par les RH Managers apparaîtront ici.</p>
-    </div>
-    <div class="loading-state" *ngIf="loading">
-      Chargement...
+    <div class="event-info">
+      <h3>{{ event.title }} <span class="status-badge">{{ event.status }}</span></h3>
+      <p class="location">📍 {{ event.location }}</p>
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="event.progress" [style.background]="progressColor(event.progress)"></div>
+      </div>
+      <p class="capacity">{{ event.currentParticipants }}/{{ event.maxParticipants }} participants</p>
     </div>
   </div>
 </div>

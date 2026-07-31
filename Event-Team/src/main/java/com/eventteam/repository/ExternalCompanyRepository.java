@@ -11,4 +11,5 @@ public interface ExternalCompanyRepository extends JpaRepository<ExternalCompany
     Optional<ExternalCompany> findByEmail(String email);
     boolean existsByEmail(String email);
     List<ExternalCompany> findAllByStatus(AccountStatus status);
+    List<ExternalCompany> findByValidatedBy_Id(Long responsableRhId);
 }

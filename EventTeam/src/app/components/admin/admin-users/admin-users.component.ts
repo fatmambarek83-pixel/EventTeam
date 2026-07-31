@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 import { AdminService } from '../../../Services/admin.service';
 import { RhAccount } from '../../../Services/admin.service';
 
@@ -29,7 +30,7 @@ export class AdminUsersComponent implements OnInit {
   successMessage = '';
   errorMessage = '';
 
-  constructor(private adminService: AdminService) {}
+  constructor(private adminService: AdminService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadUsers();
@@ -62,6 +63,10 @@ export class AdminUsersComponent implements OnInit {
 
   getAvatarColor(index: number): string {
     return AVATAR_COLORS[index % AVATAR_COLORS.length];
+  }
+
+  viewProfile(user: RhAccount): void {
+    this.router.navigate(['/admin/users', user.id]);
   }
 
   /* ========== SUPPRESSION ========== */
@@ -102,7 +107,7 @@ export class AdminUsersComponent implements OnInit {
 
   /* ========== CRÉATION ========== */
 
-  onSubmit(): void {
+  onSubmit(rhForm?: NgForm): void {
     this.submitting = true;
     this.successMessage = '';
     this.errorMessage = '';
@@ -122,6 +127,10 @@ export class AdminUsersComponent implements OnInit {
           this.successMessage = `Compte RH créé pour ${res.email}. Les identifiants ont été envoyés par email.`;
         }
         this.form = { name: '', email: '', password: '' };
+        this.showPassword = false;
+        // resetForm() clears values AND the touched/dirty/submitted state,
+        // so the fields go back to their initial empty look (no red borders left over).
+        rhForm?.resetForm();
         this.loadUsers();
       },
       error: (err) => {

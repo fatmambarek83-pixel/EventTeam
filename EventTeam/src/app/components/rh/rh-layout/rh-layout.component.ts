@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { RhSidebarComponent } from '../rh-sidebar/rh-sidebar.component';
 import { AuthService } from '../../../Services/auth.service';
 import { ResponsableRH, isResponsableRH } from '../../../models/user.model';
@@ -15,7 +15,7 @@ import { ResponsableRH, isResponsableRH } from '../../../models/user.model';
 export class RhLayoutComponent implements OnInit {
   currentUser: ResponsableRH | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     const user = this.authService.getCurrentUser();
@@ -28,5 +28,9 @@ export class RhLayoutComponent implements OnInit {
     const first = parts[0]?.charAt(0) ?? '';
     const second = parts[1]?.charAt(0) ?? '';
     return (first + second).toUpperCase() || 'U';
+  }
+
+  goToProfile(): void {
+    this.router.navigate(['/rh/profil']);
   }
 }

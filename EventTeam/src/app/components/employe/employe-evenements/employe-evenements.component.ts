@@ -88,7 +88,13 @@ export class EmployeEvenementsComponent implements OnInit {
   }
 
   onParticiper(row: EventRow): void {
-    if (!this.employeId || !row.event.id) return;
+    if (!this.employeId || !row.event.id) {
+      console.warn('[EmployeEvenements] onParticiper bloqué — employeId:', this.employeId, 'eventId:', row.event.id);
+      this.errorMessage = !this.employeId
+        ? "Votre session n'a pas pu être identifiée. Reconnectez-vous et réessayez."
+        : "Cet événement n'est pas valide.";
+      return;
+    }
     this.pendingActionEventId = row.event.id;
     this.participationService.participer(row.event.id, this.employeId).subscribe({
       next: () => {
@@ -103,7 +109,13 @@ export class EmployeEvenementsComponent implements OnInit {
   }
 
   onAnnuler(row: EventRow): void {
-    if (!this.employeId || !row.event.id) return;
+    if (!this.employeId || !row.event.id) {
+      console.warn('[EmployeEvenements] onAnnuler bloqué — employeId:', this.employeId, 'eventId:', row.event.id);
+      this.errorMessage = !this.employeId
+        ? "Votre session n'a pas pu être identifiée. Reconnectez-vous et réessayez."
+        : "Cet événement n'est pas valide.";
+      return;
+    }
     if (!confirm(`Annuler votre participation à "${row.event.name}" ?`)) return;
     this.pendingActionEventId = row.event.id;
     this.participationService.annuler(row.event.id, this.employeId).subscribe({

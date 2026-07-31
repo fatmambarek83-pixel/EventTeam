@@ -5,6 +5,7 @@ import com.eventteam.repository.EventRepository;
 import com.eventteam.service.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,12 @@ public class EventController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH', 'EMPLOYE', 'EXTERNAL_COMPANY')")
-    public List<Event> getAll() {
+    public List<Event> getAll(Authentication authentication) {
+        boolean isRH = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_RESPONSABLE_RH"));
+        if (isRH) {
+            return eventService.findAllForResponsable(authentication.getName());
+        }
         return eventService.findAll();
     }
 
@@ -31,8 +37,13 @@ public class EventController {
 
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH', 'EMPLOYE', 'EXTERNAL_COMPANY')")
-    public Event create(@RequestBody Event event) {
-        return eventService.create(event);
+    public Event create(@RequestBody Event event, Authentication authentication) {
+        boolean isRH = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_RESPONSABLE_RH"));
+        boolean isExternalCompany = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_EXTERNAL_COMPANY"));
+        String creatorRole = isRH ? "RESPONSABLE_RH" : isExternalCompany ? "EXTERNAL_COMPANY" : "";
+        return eventService.create(event, authentication.getName(), creatorRole);
     }
 
     @PutMapping("/{id}")

@@ -1,5 +1,6 @@
 package com.eventteam.controller;
 import com.eventteam.entity.Employe;
+import com.eventteam.dto.ChangePasswordRequest;
 import com.eventteam.repository.EmployeRepository;
 import com.eventteam.service.EmployeService;
 import jakarta.validation.Valid;
@@ -19,12 +20,17 @@ public class EmployeController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH')")
-    public List<Employe> findAll(){
+    public List<Employe> findAll(Authentication authentication){
+        boolean isRH = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_RESPONSABLE_RH"));
+        if (isRH) {
+            return employeService.findAllValidatedBy(authentication.getName());
+        }
         return employeService.findAll();
     }
 
     @GetMapping("/pending")
-    @PreAuthorize("hasRole('RESPONSABLE_RH')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH')")
     public List<Employe> findPending(){
         return employeService.findPending();
     }
@@ -48,14 +54,21 @@ public class EmployeController {
 
     @PutMapping("/{id}/validate")
     @PreAuthorize("hasRole('RESPONSABLE_RH')")
-    public Employe validate(@PathVariable Long id){
-        return employeService.validate(id);
+    public Employe validate(@PathVariable Long id, Authentication authentication){
+        return employeService.validate(id, authentication.getName());
     }
 
     @PutMapping("/{id}/reject")
     @PreAuthorize("hasRole('RESPONSABLE_RH')")
     public Employe reject(@PathVariable Long id){
         return employeService.reject(id);
+    }
+
+    @PutMapping("/change-password")
+    @PreAuthorize("hasRole('EMPLOYE')")
+    public void changePassword(Authentication authentication, @RequestBody ChangePasswordRequest request){
+        String email = authentication.getName();
+        employeService.changePassword(email, request.getCurrentPassword(), request.getNewPassword());
     }
 
     @DeleteMapping("/{id}")

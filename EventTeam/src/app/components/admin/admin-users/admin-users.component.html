@@ -39,21 +39,21 @@
       <button class="alert-close" (click)="errorMessage = ''">×</button>
     </div>
 
-    <form (ngSubmit)="onSubmit()">
+    <form #rhForm="ngForm" (ngSubmit)="onSubmit(rhForm)">
       <div class="form-row">
         <div class="form-group">
           <label>Nom complet</label>
-          <input type="text" name="name" placeholder="Prénom Nom" [(ngModel)]="form.name" required>
+          <input type="text" name="rhFullName" placeholder="Prénom Nom" [(ngModel)]="form.name" required autocomplete="off">
         </div>
         <div class="form-group">
           <label>Email professionnel</label>
-          <input type="email" name="email" placeholder="rh@entreprise.fr" [(ngModel)]="form.email" required>
+          <input type="text" inputmode="email" name="rhEmailAddr" placeholder="rh@entreprise.fr" [(ngModel)]="form.email" required autocomplete="off">
         </div>
       </div>
       <div class="form-group">
         <label>Mot de passe provisoire</label>
         <div class="password-wrapper">
-          <input [type]="showPassword ? 'text' : 'password'" name="password" placeholder="Minimum 6 caractères" [(ngModel)]="form.password" required>
+          <input [type]="showPassword ? 'text' : 'password'" name="rhTempPass" placeholder="Minimum 6 caractères" [(ngModel)]="form.password" required autocomplete="new-password">
           <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
             <svg *ngIf="!showPassword" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             <svg *ngIf="showPassword" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-11-8-11-8a18.5 18.5 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
@@ -107,9 +107,9 @@
           <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
           Accepté
         </span>
-        <span class="user-date">{{ u.createdAt || '—' }}</span>
+        <span class="user-date">{{ u.createdAt ? (u.createdAt | date:'dd/MM/yyyy') : '—' }}</span>
         <div class="user-actions">
-          <button class="action-btn view" title="Voir le profil">
+          <button class="action-btn view" title="Voir le profil" (click)="viewProfile(u)">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
               <circle cx="12" cy="12" r="3"/>

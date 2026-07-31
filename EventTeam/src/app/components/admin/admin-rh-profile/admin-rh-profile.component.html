@@ -1,0 +1,60 @@
+<div class="rh-profile-wrapper">
+  <button class="retour-btn" (click)="goBack()">
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+      <line x1="19" y1="12" x2="5" y2="12"/>
+      <polyline points="12 19 5 12 12 5"/>
+    </svg>
+    Retour à la liste
+  </button>
+
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <p>Chargement du profil...</p>
+  </div>
+
+  <div class="alert error" *ngIf="errorMessage">
+    <svg class="alert-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <span>{{ errorMessage }}</span>
+  </div>
+
+  <div class="profile-card" *ngIf="user && !loading">
+    <div class="profile-header">
+      <div class="avatar-large" [style.background-color]="getAvatarColor()">
+        {{ getInitials(user.name) }}
+      </div>
+      <div class="profile-info">
+        <h2>{{ user.name }}</h2>
+        <p class="email">{{ user.email }}</p>
+        <span class="role-badge">Responsable RH</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-card" *ngIf="user && !loading">
+    <div class="card-header">
+      <h3>Informations du compte</h3>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-label">Nom complet</span>
+        <span class="info-value">{{ user.name }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Email professionnel</span>
+        <span class="info-value">{{ user.email }}</span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Statut</span>
+        <span class="status-badge">
+          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+          Accepté
+        </span>
+      </div>
+      <div class="info-item">
+        <span class="info-label">Créé le</span>
+        <span class="info-value">{{ user.createdAt ? (user.createdAt | date:'dd/MM/yyyy à HH:mm') : '—' }}</span>
+      </div>
+    </div>
+  </div>
+</div>

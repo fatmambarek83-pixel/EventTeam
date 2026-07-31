@@ -1,8 +1,10 @@
 package com.eventteam.entity;
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.CreationTimestamp;
 @Builder
 @Getter @Setter
 @NoArgsConstructor
@@ -30,4 +32,8 @@ public class ResponsableRH {
     private String departement;
     @Column(columnDefinition="TEXT")
     private String photo;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createdAt;
 }

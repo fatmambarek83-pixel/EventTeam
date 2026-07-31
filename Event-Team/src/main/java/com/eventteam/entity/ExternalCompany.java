@@ -37,6 +37,11 @@ public class ExternalCompany {
     private String phone;
     @Column(columnDefinition="TEXT")
     private String photo;
+    @ManyToOne
+    @JoinColumn(name = "validated_by_id")
+    @JsonIgnore
+    private ResponsableRH validatedBy;
+
     @OneToMany(mappedBy = "externalCompany")
     @JsonIgnore
     @Builder.Default

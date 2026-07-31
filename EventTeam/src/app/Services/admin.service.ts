@@ -32,6 +32,9 @@ export class AdminService {
   listRH(): Observable<RhAccount[]> {
     return this.http.get<RhAccount[]>(API_ENDPOINTS.ADMIN_RH);
   }
+  getRHById(id: number): Observable<RhAccount> {
+    return this.http.get<RhAccount>(`${API_ENDPOINTS.ADMIN_RH}/${id}`);
+  }
   createRH(data: { name: string; email: string; password: string }): Observable<any> {
     return this.http.post(API_ENDPOINTS.ADMIN_RH, data);
   }

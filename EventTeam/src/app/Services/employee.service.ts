@@ -47,4 +47,7 @@ export class EmployeeService {
   reject(id: number): Observable<Employe> {
     return this.http.put<Employe>(`${API_ENDPOINTS.EMPLOYES}/${id}/reject`, {});
   }
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.http.put<void>(API_ENDPOINTS.EMPLOYE_CHANGE_PASSWORD, { currentPassword, newPassword });
+  }
 }

@@ -36,10 +36,14 @@
       <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
     </select>
   </label>
+  <div class="field">
+    <span>Image de l'activité</span>
+    <app-image-picker></app-image-picker>
+  </div>
   <div class="form-actions">
     <button type="button" class="btn-secondary" (click)="onCancel()">Annuler</button>
-    <button type="submit" class="btn-primary">
-      {{ isEditMode ? "Enregistrer" : "Créer l'activité" }}
+    <button type="submit" class="btn-primary" [disabled]="saving">
+      {{ saving ? 'Enregistrement...' : (isEditMode ? "Enregistrer" : "Créer l'activité") }}
     </button>
   </div>
 </form>

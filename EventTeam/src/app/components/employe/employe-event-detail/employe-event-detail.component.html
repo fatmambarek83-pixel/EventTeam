@@ -1,0 +1,46 @@
+<a routerLink="/employee/evenements" class="retour-btn">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+    <line x1="19" y1="12" x2="5" y2="12"/>
+    <polyline points="12 19 5 12 12 5"/>
+  </svg>
+  Retour aux événements
+</a>
+
+<div class="loading-state" *ngIf="loading">Chargement...</div>
+
+<p class="error-msg" *ngIf="errorMessage">{{ errorMessage }}</p>
+
+<ng-container *ngIf="!loading && event">
+  <div class="event-header" [style.backgroundImage]="'url(' + (event.imageUrl || 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=800') + ')'">
+    <div class="event-header-overlay">
+      <span class="status-pill" [class.done]="event.status === 'Terminé'">{{ event.status || 'À venir' }}</span>
+      <h1>{{ event.name || event.title }}</h1>
+      <p class="meta">📍 {{ event.location }} &nbsp;·&nbsp; {{ event.startDate | date: 'dd MMM yyyy' }}</p>
+    </div>
+  </div>
+
+  <div class="section-header">
+    <h2>Activités de cet événement</h2>
+    <span class="count-badge" *ngIf="activities.length">{{ activities.length }}</span>
+  </div>
+
+  <div class="empty-state" *ngIf="activities.length === 0">
+    <div class="empty-icon">🎯</div>
+    <h3>Aucune activité pour le moment</h3>
+    <p>Les activités liées à cet événement apparaîtront ici.</p>
+  </div>
+
+  <div class="activities-grid" *ngIf="activities.length > 0">
+    <div class="activity-card" *ngFor="let activity of activities">
+      <div class="activity-thumb" [style.backgroundImage]="'url(' + (activity.imageUrl || 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=400') + ')'">
+        <span class="status-pill" [ngClass]="statusClass(activity.status)">{{ activity.status }}</span>
+      </div>
+      <div class="activity-body">
+        <h3>{{ activity.name }}</h3>
+        <p class="description" *ngIf="activity.description">{{ activity.description }}</p>
+        <p class="meta-row" *ngIf="activity.animateur">🧑‍🏫 Animé par {{ activity.animateur }}</p>
+        <p class="meta-row" *ngIf="activity.startDate">🗓️ {{ activity.startDate | date: 'dd MMM yyyy' }}</p>
+      </div>
+    </div>
+  </div>
+</ng-container>

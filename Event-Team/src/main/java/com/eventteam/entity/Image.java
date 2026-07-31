@@ -20,6 +20,7 @@ public class Image {
     @Column(unique = true,updatable = false)
     private UUID uuid = UUID.randomUUID();
     private String extension;
+    @Column(columnDefinition = "TEXT")
     private String path;
     @ManyToOne
     @JoinColumn(name="activity_id")

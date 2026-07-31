@@ -49,36 +49,6 @@ app-external-sidebar {
   align-items: center;
   gap: 16px;
 }
-.icon-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  border-radius: 10px;
-  color: #64748b;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.icon-btn:hover {
-  background-color: #f1f5f9;
-  color: #1e293b;
-}
-.icon-btn svg {
-  width: 22px;
-  height: 22px;
-}
-.icon-btn .dot {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #ef4444;
-  border: 2px solid #fff;
-}
 .user-chip {
   display: flex;
   align-items: center;

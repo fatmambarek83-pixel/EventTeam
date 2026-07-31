@@ -42,6 +42,11 @@ public class Employe {
     private String departement;
     @Column(columnDefinition="TEXT")
     private String photo;
+    @ManyToOne
+    @JoinColumn(name = "validated_by_id")
+    @JsonIgnore
+    private ResponsableRH validatedBy;
+
     @OneToMany(mappedBy = "employe", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @Builder.Default

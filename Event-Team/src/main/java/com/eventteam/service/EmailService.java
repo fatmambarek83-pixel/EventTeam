@@ -62,4 +62,28 @@ public class EmailService {
         );
         mailSender.send(message);
     }
+    public void sendParticipationAccepted(String toEmail, String name, String eventName) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Votre participation a été acceptée — Event-Team");
+        message.setText(
+                "Bonjour " + name + ",\n\n" +
+                        "Bonne nouvelle ! Votre demande de participation à l'événement \"" + eventName + "\" a été acceptée par le Responsable RH.\n\n" +
+                        "L'équipe Event-Team"
+        );
+        mailSender.send(message);
+    }
+    public void sendParticipationRefused(String toEmail, String name, String eventName) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Votre participation a été refusée — Event-Team");
+        message.setText(
+                "Bonjour " + name + ",\n\n" +
+                        "Votre demande de participation à l'événement \"" + eventName + "\" a été refusée par le Responsable RH.\n\n" +
+                        "Votre compte a été suspendu et vous ne pourrez plus vous connecter à Event-Team. " +
+                        "Pour plus d'informations, contactez votre service RH.\n\n" +
+                        "L'équipe Event-Team"
+        );
+        mailSender.send(message);
+    }
 }

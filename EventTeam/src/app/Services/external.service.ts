@@ -47,4 +47,7 @@ export class ExternalService {
   reject(id: number): Observable<ExternalCompany> {
     return this.http.put<ExternalCompany>(`${API_ENDPOINTS.EXTERNAL_COMPANIES}/${id}/reject`, {});
   }
+  changePassword(currentPassword: string, newPassword: string): Observable<void> {
+    return this.http.put<void>(API_ENDPOINTS.EXTERNAL_CHANGE_PASSWORD, { currentPassword, newPassword });
+  }
 }

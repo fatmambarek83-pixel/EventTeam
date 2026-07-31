@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, forkJoin, map } from 'rxjs';
+import { Observable, forkJoin, map, catchError, of } from 'rxjs';
 import { API_ENDPOINTS } from '../constants/api.constants';
 import {
   Activity,
@@ -22,6 +22,7 @@ import { Feedback as BackendFeedback } from '../models/feedback.model';
 import { Participation as BackendParticipation } from '../models/participation.model';
 import { EmployeeService } from './employee.service';
 import { ExternalService } from './external.service';
+import { ImageService } from './image.service';
 
 /**
  * Aggregates data for the RH ("Responsable RH") dashboard screens.
@@ -41,7 +42,8 @@ export class RhService {
   constructor(
     private http: HttpClient,
     private employeeService: EmployeeService,
-    private externalService: ExternalService
+    private externalService: ExternalService,
+    private imageService: ImageService
   ) {}
 
   // ---------------------------------------------------------------------
@@ -133,15 +135,20 @@ export class RhService {
   // ---------------------------------------------------------------------
 
   getEvents(): Observable<EventItem[]> {
-    return this.http
-      .get<BackendEvent[]>(API_ENDPOINTS.EVENTS)
-      .pipe(map((list) => list.map((e) => this.mapEvent(e))));
+    return forkJoin([
+      this.http.get<BackendEvent[]>(API_ENDPOINTS.EVENTS),
+      this.imageService.getAllEventImagePaths().pipe(catchError(() => of({} as Record<string, string>))),
+    ]).pipe(map(([list, images]) => list.map((e) => this.mapEvent(e, images))));
   }
 
   getEventById(id: string): Observable<EventItem> {
-    return this.http
-      .get<BackendEvent>(`${API_ENDPOINTS.EVENTS}/${id}`)
-      .pipe(map((e) => this.mapEvent(e)));
+    return forkJoin([
+      this.http.get<BackendEvent>(`${API_ENDPOINTS.EVENTS}/${id}`),
+      this.imageService.getByEvent(id).pipe(
+        map((img) => img?.path),
+        catchError(() => of(undefined))
+      ),
+    ]).pipe(map(([e, path]) => this.mapEvent(e, path ? { [id]: path } : {})));
   }
 
   getUpcomingEvents(): Observable<EventItem[]> {
@@ -182,7 +189,7 @@ export class RhService {
     };
   }
 
-  private mapEvent(e: BackendEvent): EventItem {
+  private mapEvent(e: BackendEvent, images: Record<string, string> = {}): EventItem {
     return {
       id: e.id != null ? String(e.id) : '',
       name: e.name || e.title || '',
@@ -193,7 +200,7 @@ export class RhService {
       registeredCount: e.participantsCount ?? 0,
       activityId: '',
       status: (e.status as EventStatus) || 'À venir',
-      imageUrl: undefined,
+      imageUrl: e.id != null ? images[String(e.id)] : undefined,
     };
   }
 
@@ -202,16 +209,17 @@ export class RhService {
   // ---------------------------------------------------------------------
 
   getActivities(): Observable<Activity[]> {
-    return this.http
-      .get<BackendActivity[]>(API_ENDPOINTS.ACTIVITIES)
-      .pipe(map((list) => list.map((a) => this.mapActivity(a))));
+    return forkJoin([
+      this.http.get<BackendActivity[]>(API_ENDPOINTS.ACTIVITIES),
+      this.imageService.getAllActivityImagePaths().pipe(catchError(() => of({} as Record<string, string>))),
+    ]).pipe(map(([list, images]) => list.map((a) => this.mapActivity(a, images))));
   }
 
   deleteActivity(id: string): Observable<void> {
     return this.http.delete<void>(`${API_ENDPOINTS.ACTIVITIES}/${id}`);
   }
 
-  private mapActivity(a: BackendActivity): Activity {
+  private mapActivity(a: BackendActivity, images: Record<string, string> = {}): Activity {
     return {
       id: a.id != null ? String(a.id) : '',
       name: a.name || '',
@@ -220,7 +228,7 @@ export class RhService {
       endDate: a.endDate || '',
       facilitator: a.animateur || '',
       status: (a.status as ActivityStatus) || 'Planifié',
-      imageUrl: undefined,
+      imageUrl: a.id != null ? images[String(a.id)] : undefined,
     };
   }
 

@@ -8,4 +8,5 @@ export interface Activity {
   description?: string;
   animateur?: string;
   status?: string;
+  imageUrl?: string;
 }

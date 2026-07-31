@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../Services/auth.service';
 import { ExternalService } from '../../../Services/external.service';
@@ -8,7 +9,7 @@ import { ExternalCompany, isExternalCompany } from '../../../models/user.model';
 @Component({
   selector: 'app-external-profil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './external-profil.component.html',
   styleUrls: ['./external-profil.component.css'],
 })
@@ -23,6 +24,11 @@ export class ExternalProfilComponent implements OnInit {
   photoError = '';
   private static readonly MAX_PHOTO_SIZE = 2 * 1024 * 1024; // 2MB
 
+  passwordForm: FormGroup;
+  passwordSaving = false;
+  passwordSaved = false;
+  passwordError = '';
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -33,6 +39,11 @@ export class ExternalProfilComponent implements OnInit {
       email: ['', [Validators.required, Validators.email]],
       contactName: [''],
       phone: [''],
+    });
+    this.passwordForm = this.fb.group({
+      currentPassword: ['', Validators.required],
+      newPassword: ['', [Validators.required, Validators.minLength(6)]],
+      confirmPassword: ['', Validators.required],
     });
   }
 
@@ -129,6 +140,37 @@ export class ExternalProfilComponent implements OnInit {
       },
       error: () => {
         this.saveError = true;
+      },
+    });
+  }
+
+  onChangePassword(): void {
+    this.passwordError = '';
+    this.passwordSaved = false;
+
+    if (this.passwordForm.invalid) {
+      this.passwordForm.markAllAsTouched();
+      return;
+    }
+
+    const { currentPassword, newPassword, confirmPassword } = this.passwordForm.value;
+
+    if (newPassword !== confirmPassword) {
+      this.passwordError = 'Le nouveau mot de passe et la confirmation ne correspondent pas.';
+      return;
+    }
+
+    this.passwordSaving = true;
+    this.externalService.changePassword(currentPassword, newPassword).subscribe({
+      next: () => {
+        this.passwordSaving = false;
+        this.passwordSaved = true;
+        this.passwordForm.reset();
+        setTimeout(() => (this.passwordSaved = false), 2500);
+      },
+      error: (err: any) => {
+        this.passwordSaving = false;
+        this.passwordError = err?.error?.message || 'Le mot de passe actuel est incorrect.';
       },
     });
   }

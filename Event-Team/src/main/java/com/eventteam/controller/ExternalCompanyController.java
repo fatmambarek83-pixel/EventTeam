@@ -1,5 +1,6 @@
 package com.eventteam.controller;
 import com.eventteam.entity.ExternalCompany;
+import com.eventteam.dto.ChangePasswordRequest;
 import com.eventteam.repository.ExternalCompanyRepository;
 import com.eventteam.service.ExternalCompanyService;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,17 @@ public class ExternalCompanyController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH')")
-    public List<ExternalCompany> getAll() {
+    public List<ExternalCompany> getAll(Authentication authentication) {
+        boolean isRH = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_RESPONSABLE_RH"));
+        if (isRH) {
+            return externalCompanyService.findAllValidatedBy(authentication.getName());
+        }
         return externalCompanyService.findAll();
     }
 
     @GetMapping("/pending")
-    @PreAuthorize("hasRole('RESPONSABLE_RH')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH')")
     public List<ExternalCompany> getPending() {
         return externalCompanyService.findPending();
     }
@@ -49,14 +55,21 @@ public class ExternalCompanyController {
 
     @PutMapping("/{id}/validate")
     @PreAuthorize("hasRole('RESPONSABLE_RH')")
-    public ExternalCompany validate(@PathVariable Long id) {
-        return externalCompanyService.validate(id);
+    public ExternalCompany validate(@PathVariable Long id, Authentication authentication) {
+        return externalCompanyService.validate(id, authentication.getName());
     }
 
     @PutMapping("/{id}/reject")
     @PreAuthorize("hasRole('RESPONSABLE_RH')")
     public ExternalCompany reject(@PathVariable Long id) {
         return externalCompanyService.reject(id);
+    }
+
+    @PutMapping("/change-password")
+    @PreAuthorize("hasRole('EXTERNAL_COMPANY')")
+    public void changePassword(Authentication authentication, @RequestBody ChangePasswordRequest request) {
+        String email = authentication.getName();
+        externalCompanyService.changePassword(email, request.getCurrentPassword(), request.getNewPassword());
     }
 
     @DeleteMapping("/{id}")

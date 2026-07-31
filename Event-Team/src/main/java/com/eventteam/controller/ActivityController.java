@@ -14,19 +14,19 @@ public class ActivityController {
     private final ActivityService activityService;
 
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH', 'EMPLOYE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH', 'EMPLOYE', 'EXTERNAL_COMPANY')")
     public List<Activity> getAll() {
         return activityService.findAll();
     }
 
     @GetMapping("/event/{eventId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH', 'EMPLOYE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH', 'EMPLOYE', 'EXTERNAL_COMPANY')")
     public List<Activity> getByEvent(@PathVariable Long eventId) {
         return activityService.findByEvent(eventId);
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH', 'EMPLOYE')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RESPONSABLE_RH', 'EMPLOYE', 'EXTERNAL_COMPANY')")
     public Activity getById(@PathVariable Long id) {
         return activityService.findById(id);
     }

@@ -1,0 +1,45 @@
+<div class="image-picker">
+  <div class="preview" *ngIf="uploadedPreview || selectedUrl; else noPreview">
+    <img [src]="uploadedPreview || selectedUrl" alt="Image sélectionnée" />
+    <button type="button" class="clear-btn" (click)="clearSelection()">✕ Retirer</button>
+  </div>
+  <ng-template #noPreview>
+    <div class="preview empty">
+      <span>🖼️ Aucune image choisie</span>
+      <p>Une image sera choisie aléatoirement si vous n'en sélectionnez pas.</p>
+    </div>
+  </ng-template>
+
+  <div class="categories">
+    <button
+      type="button"
+      class="category-chip"
+      *ngFor="let cat of categories"
+      [class.active]="cat === activeCategory"
+      (click)="setCategory(cat)"
+    >
+      {{ cat }}
+    </button>
+  </div>
+
+  <div class="gallery-grid">
+    <button
+      type="button"
+      class="gallery-item"
+      *ngFor="let img of visibleImages"
+      [class.selected]="img.url === selectedUrl"
+      (click)="selectPreset(img)"
+    >
+      <img [src]="img.url" [alt]="img.label" loading="lazy" />
+      <span class="gallery-label">{{ img.label }}</span>
+    </button>
+  </div>
+
+  <div class="upload-row">
+    <label class="upload-btn">
+      📤 Importer votre propre image
+      <input type="file" accept="image/*" (change)="onFileSelected($event)" hidden />
+    </label>
+    <span class="upload-error" *ngIf="uploadError">{{ uploadError }}</span>
+  </div>
+</div>

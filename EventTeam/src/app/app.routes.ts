@@ -21,10 +21,12 @@ import { LoginComponent } from './components/auth/login/login.component';
 import { RegisterComponent } from './components/auth/register/register.component';
 import { AdminLayoutComponent } from './components/admin/admin-layout/admin-layout.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashbord/admin-dashboard.component';
+import { AdminEventDetailComponent } from './components/admin/admin-event-detail/admin-event-detail.component';
 import { AdminUsersComponent } from './components/admin/admin-users/admin-users.component';
 import { EmployeLayoutComponent } from './components/employe/employe-layout/employe-layout.component';
 import { EmployeDashboardComponent } from './components/employe/employe-dashboard/employe-dashboard.component';
 import { EmployeEvenementsComponent } from './components/employe/employe-evenements/employe-evenements.component';
+import { EmployeEventDetailComponent } from './components/employe/employe-event-detail/employe-event-detail.component';
 import { EmployeParticipationsComponent } from './components/employe/employe-participations/employe-participations.component';
 import { EmployeFeedbackComponent } from './components/employe/employe-feedback/employe-feedback.component';
 import { EmployeProfilComponent } from './components/employe/employe-profil/employe-profil.component';
@@ -37,6 +39,7 @@ import { ExternalProfilComponent } from './components/external/external-profil/e
 import { ExternalParametresComponent } from './components/external/external-parametres/external-parametres.component';
 
 export const routes: Routes = [
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordComponent },
@@ -47,10 +50,12 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     children: [
       { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'evenements/:id', component: AdminEventDetailComponent },
       { path: 'users', component: AdminUsersComponent },
       { path: 'profile', loadComponent: () => import('./components/admin/profile/profile.component').then(m => m.ProfileComponent) },
       { path: 'settings', loadComponent: () => import('./components/admin/settings/settings.component').then(m =>
           m.SettingsComponent) },
+      { path: 'users/:id', loadComponent: () => import('./components/admin/admin-rh-profile/admin-rh-profile.component').then(m => m.AdminRhProfileComponent) },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
     ]
   },
@@ -83,6 +88,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: EmployeDashboardComponent },
       { path: 'evenements', component: EmployeEvenementsComponent },
+      { path: 'evenements/:id', component: EmployeEventDetailComponent },
       { path: 'participations', component: EmployeParticipationsComponent },
       { path: 'feedback', component: EmployeFeedbackComponent },
       { path: 'profil', component: EmployeProfilComponent },

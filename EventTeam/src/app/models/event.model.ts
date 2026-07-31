@@ -11,4 +11,5 @@ export interface Event {
   status?: string;
   capacity?: number;
   participantsCount?: number;
+  imageUrl?: string;
 }

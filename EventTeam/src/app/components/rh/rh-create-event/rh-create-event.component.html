@@ -1,4 +1,10 @@
-<a routerLink="/rh/evenements" class="back-link">← Retour aux événements</a>
+<a routerLink="/rh/evenements" class="retour-btn">
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+    <line x1="19" y1="12" x2="5" y2="12"/>
+    <polyline points="12 19 5 12 12 5"/>
+  </svg>
+  Retour aux événements
+</a>
 <h1 class="form-title">{{ isEditMode ? "Modifier l'événement" : 'Nouvel événement' }}</h1>
 <form class="form-card" [formGroup]="form" (ngSubmit)="onSubmit()">
   <label class="field">
@@ -29,10 +35,14 @@
       <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
     </select>
   </label>
+  <div class="field">
+    <span>Image de l'événement</span>
+    <app-image-picker></app-image-picker>
+  </div>
   <div class="form-actions">
     <button type="button" class="btn-secondary" (click)="onCancel()">Annuler</button>
-    <button type="submit" class="btn-primary">
-      {{ isEditMode ? 'Enregistrer' : "Créer l'événement" }}
+    <button type="submit" class="btn-primary" [disabled]="saving">
+      {{ saving ? 'Enregistrement...' : (isEditMode ? 'Enregistrer' : "Créer l'événement") }}
     </button>
   </div>
 </form>

@@ -1,6 +1,7 @@
 package com.eventteam.service;
 
 import com.eventteam.dto.ParticipationDto;
+import com.eventteam.entity.AccountStatus;
 import com.eventteam.entity.Employe;
 import com.eventteam.entity.Event;
 import com.eventteam.entity.ExternalCompany;
@@ -24,6 +25,7 @@ public class ParticipationService {
   private final EventRepository eventRepository;
   private final EmployeRepository employeRepository;
   private final ExternalCompanyRepository externalCompanyRepository;
+  private final EmailService emailService;
 
   private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -94,7 +96,43 @@ public class ParticipationService {
     Participation participation = participationRepository.findById(id)
             .orElseThrow(() -> new RuntimeException("Participation introuvable avec id: " + id));
     participation.setStatus(status);
-    return toDto(participationRepository.save(participation));
+    Participation saved = participationRepository.save(participation);
+
+    if (status == ParticipationStatus.ACCEPTEE) {
+      notifyAccepted(saved);
+    } else if (status == ParticipationStatus.REFUSEE) {
+      notifyRefused(saved);
+    }
+
+    return toDto(saved);
+  }
+
+  /** Envoie un email de confirmation au participant. */
+  private void notifyAccepted(Participation p) {
+    String eventName = p.getEvent() != null ? p.getEvent().getName() : "";
+    if (p.getEmploye() != null) {
+      Employe employe = p.getEmploye();
+      emailService.sendParticipationAccepted(employe.getEmail(), employe.getName(), eventName);
+    } else if (p.getExternalCompany() != null) {
+      ExternalCompany company = p.getExternalCompany();
+      emailService.sendParticipationAccepted(company.getEmail(), company.getName(), eventName);
+    }
+  }
+
+  /** Envoie un email de refus au participant et bloque son accès (il ne peut plus se connecter). */
+  private void notifyRefused(Participation p) {
+    String eventName = p.getEvent() != null ? p.getEvent().getName() : "";
+    if (p.getEmploye() != null) {
+      Employe employe = p.getEmploye();
+      employe.setStatus(AccountStatus.REJECTED);
+      employeRepository.save(employe);
+      emailService.sendParticipationRefused(employe.getEmail(), employe.getName(), eventName);
+    } else if (p.getExternalCompany() != null) {
+      ExternalCompany company = p.getExternalCompany();
+      company.setStatus(AccountStatus.REJECTED);
+      externalCompanyRepository.save(company);
+      emailService.sendParticipationRefused(company.getEmail(), company.getName(), eventName);
+    }
   }
 
   public ParticipationStatus fromFrenchLabel(String label) {
